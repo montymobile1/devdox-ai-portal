@@ -8,12 +8,12 @@ import {
 import { useIntersectionObserver } from './hooks/useIntersectionObserver';
 
 interface FloatingIconProps {
-  icon: React.ReactNode;
-  className?: string;
-  delay?: string;
+  readonly icon: React.ReactNode;
+  readonly className?: string;
+  readonly delay?: string;
 }
 
-function FloatingIcon({ icon, className = "", delay = "0s" }: FloatingIconProps) {
+function FloatingIcon({ icon, className = "", delay = "0s" }: Readonly<FloatingIconProps>) {
   return (
     <div className={`hidden sm:block absolute floating opacity-40 ${className}`} style={{ animationDelay: delay }}>
       <div className="bg-slate-800/40 p-3 rounded-lg border border-cyan-400/10 backdrop-blur-sm">
