@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { 
   GitBranch, FileCode, RefreshCw, FileText, ChevronRight, Github, 
   Gitlab as GitlabLogo, CheckCircle, Menu, X, Terminal, Coffee, 
-  Code2, Database, Bug, Cpu, GitCommit, GitMerge, Settings, Search,
-  Laptop, Monitor, Cloud, Server, Lock, Key, Shield, Wifi, Zap
+  Code2, Database, Bug, Cpu, GitCommit, Settings,
+  Laptop, Monitor, Lock, Shield
 } from 'lucide-react';
 import { useIntersectionObserver } from './hooks/useIntersectionObserver';
 
@@ -24,8 +24,8 @@ function FloatingIcon({ icon, className = "", delay = "0s" }: Readonly<FloatingI
 }
 
 interface NeuralPath {
-  id: string;
-  path: string;
+  readonly id: string;
+  readonly path: string;
 }
 
 function NeuralNetwork() {
@@ -100,6 +100,38 @@ function NeuralNetwork() {
       <circle cx="600" cy="300" />
       <circle cx="900" cy="300" />
     </svg>
+  );
+}
+
+interface FeatureCardProps {
+  readonly icon: React.ReactNode;
+  readonly title: string;
+  readonly description: string;
+}
+
+interface StepCardProps {
+  readonly number: string;
+  readonly title: string;
+  readonly description: string;
+}
+
+function FeatureCard({ icon, title, description }: Readonly<FeatureCardProps>) {
+  return (
+    <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-cyan-400 transition-colors">
+      <div className="mb-4">{icon}</div>
+      <h3 className="text-xl font-semibold mb-2">{title}</h3>
+      <p className="text-gray-400">{description}</p>
+    </div>
+  );
+}
+
+function StepCard({ number, title, description }: Readonly<StepCardProps>) {
+  return (
+    <div className="text-center p-6 rounded-xl bg-slate-800 border border-slate-700 hover:border-cyan-400 transition-all">
+      <div className="text-3xl sm:text-4xl font-bold text-cyan-400 mb-4">{number}</div>
+      <h3 className="text-lg sm:text-xl font-semibold mb-2">{title}</h3>
+      <p className="text-gray-400">{description}</p>
+    </div>
   );
 }
 
@@ -311,26 +343,6 @@ function App() {
           </div>
         </footer>
       </div>
-    </div>
-  );
-}
-
-function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
-  return (
-    <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-cyan-400 transition-colors">
-      <div className="mb-4">{icon}</div>
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-gray-400">{description}</p>
-    </div>
-  );
-}
-
-function StepCard({ number, title, description }: { number: string; title: string; description: string }) {
-  return (
-    <div className="text-center p-6 rounded-xl bg-slate-800 border border-slate-700 hover:border-cyan-400 transition-all">
-      <div className="text-3xl sm:text-4xl font-bold text-cyan-400 mb-4">{number}</div>
-      <h3 className="text-lg sm:text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-gray-400">{description}</p>
     </div>
   );
 }
