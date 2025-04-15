@@ -6,35 +6,38 @@ import {
   Laptop, Monitor, Cloud, Server, Lock, Key, Shield, Wifi, Zap
 } from 'lucide-react';
 
-const updateVisibleSections = (entry: IntersectionObserverEntry, prevSections: Set<string>) => {
-  const newSet = new Set(prevSections);
-  if (entry.isIntersecting) {
-    newSet.add(entry.target.id);
-  }
-  return newSet;
-};
-
-const createIntersectionObserver = (callback: IntersectionObserverCallback) => {
-  return new IntersectionObserver(callback, { threshold: 0.2 });
-};
-
-function App() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+// Separate component for handling intersection observation
+function useIntersectionObserver() {
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    const handleIntersection: IntersectionObserverCallback = (entries) => {
-      entries.forEach(entry => {
-        setVisibleSections(prev => updateVisibleSections(entry, prev));
+    const updateSection = (entry: IntersectionObserverEntry) => {
+      setVisibleSections(prev => {
+        const newSet = new Set(prev);
+        if (entry.isIntersecting) {
+          newSet.add(entry.target.id);
+        }
+        return newSet;
       });
     };
 
-    const observer = createIntersectionObserver(handleIntersection);
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(updateSection),
+      { threshold: 0.2 }
+    );
+
     const sections = document.querySelectorAll('section[id]');
     sections.forEach(section => observer.observe(section));
 
     return () => observer.disconnect();
   }, []);
+
+  return visibleSections;
+}
+
+function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const visibleSections = useIntersectionObserver();
 
   const NeuralNetwork = () => {
     const paths = [
