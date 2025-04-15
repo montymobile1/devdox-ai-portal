@@ -6,23 +6,30 @@ import {
   Laptop, Monitor, Cloud, Server, Lock, Key, Shield, Wifi, Zap
 } from 'lucide-react';
 
+const updateVisibleSections = (entry: IntersectionObserverEntry, prevSections: Set<string>) => {
+  const newSet = new Set(prevSections);
+  if (entry.isIntersecting) {
+    newSet.add(entry.target.id);
+  }
+  return newSet;
+};
+
+const createIntersectionObserver = (callback: IntersectionObserverCallback) => {
+  return new IntersectionObserver(callback, { threshold: 0.2 });
+};
+
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
+    const handleIntersection: IntersectionObserverCallback = (entries) => {
       entries.forEach(entry => {
-        setVisibleSections(prev => {
-          const newSet = new Set(prev);
-          if (entry.isIntersecting) {
-            newSet.add(entry.target.id);
-          }
-          return newSet;
-        });
+        setVisibleSections(prev => updateVisibleSections(entry, prev));
       });
-    }, { threshold: 0.2 });
+    };
 
+    const observer = createIntersectionObserver(handleIntersection);
     const sections = document.querySelectorAll('section[id]');
     sections.forEach(section => observer.observe(section));
 
