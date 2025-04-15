@@ -1,6 +1,6 @@
 # DevDox.ai - 24/7 Dev Power in Your Pocket
 
-![DevDox.ai](public/logo.png)
+![DevDox.ai](https://github.com/montymobile1/devdox-ai-portal/blob/f92d27d2f4f23229f8f83f2db3dd378c26a8cd03/public/logo.png)
 
 DevDox.ai is an AI-powered development assistant that helps developers automate code reviews, documentation, and feature development. It seamlessly integrates with your existing workflow and provides intelligent suggestions based on your codebase.
 
@@ -25,7 +25,7 @@ DevDox.ai is an AI-powered development assistant that helps developers automate 
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/devdox-ai.git
+git clone https://github.com/montymobile1/devdox-ai-portal.git
 ```
 
 2. Install dependencies
