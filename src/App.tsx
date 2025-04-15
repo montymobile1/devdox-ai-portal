@@ -1,114 +1,94 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   GitBranch, FileCode, RefreshCw, FileText, ChevronRight, Github, 
   Gitlab as GitlabLogo, CheckCircle, Menu, X, Terminal, Coffee, 
   Code2, Database, Bug, Cpu, GitCommit, GitMerge, Settings, Search,
   Laptop, Monitor, Cloud, Server, Lock, Key, Shield, Wifi, Zap
 } from 'lucide-react';
+import { useIntersectionObserver } from './hooks/useIntersectionObserver';
 
-// Separate component for handling intersection observation
-function useIntersectionObserver() {
-  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    const updateSection = (entry: IntersectionObserverEntry) => {
-      setVisibleSections(prev => {
-        const newSet = new Set(prev);
-        if (entry.isIntersecting) {
-          newSet.add(entry.target.id);
-        }
-        return newSet;
-      });
-    };
-
-    const observer = new IntersectionObserver(
-      entries => entries.forEach(updateSection),
-      { threshold: 0.2 }
-    );
-
-    const sections = document.querySelectorAll('section[id]');
-    sections.forEach(section => observer.observe(section));
-
-    return () => observer.disconnect();
-  }, []);
-
-  return visibleSections;
+interface FloatingIconProps {
+  icon: React.ReactNode;
+  className?: string;
+  delay?: string;
 }
 
-function App() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const visibleSections = useIntersectionObserver();
-
-  const NeuralNetwork = () => {
-    const paths = [
-      "M100,100 C200,150 300,50 400,100",
-      "M150,200 C250,250 350,150 450,200",
-      "M200,300 C300,350 400,250 500,300",
-      "M250,400 C350,450 450,350 550,400",
-      "M300,500 C400,550 500,450 600,500",
-      "M100,100 C150,200 100,300 150,400",
-      "M400,100 C450,200 400,300 450,400",
-      "M150,200 C200,300 150,400 200,500",
-      "M450,200 C500,300 450,400 500,500",
-      "M600,100 C700,150 800,50 900,100",
-      "M650,200 C750,250 850,150 950,200",
-      "M600,300 C700,350 800,250 900,300"
-    ];
-
-    return (
-      <svg className="neural-network" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
-        {paths.map((d, i) => (
-          <g key={i}>
-            <path id={`path-${i}`} d={d} style={{ animationDelay: `${i * 0.5}s` }} />
-            <circle className="moving-dot" r="4" style={{ animationDelay: `${i * 0.5}s` }}>
-              <animateMotion
-                dur="4s"
-                repeatCount="indefinite"
-                path={d}
-                rotate="auto"
-                begin={`${i * 0.5}s`}
-              />
-            </circle>
-            <circle className="glowing-dot" r="6" style={{ animationDelay: `${i * 0.5}s` }}>
-              <animateMotion
-                dur="4s"
-                repeatCount="indefinite"
-                path={d}
-                rotate="auto"
-                begin={`${i * 0.5}s`}
-              />
-            </circle>
-          </g>
-        ))}
-        
-        {/* Static nodes */}
-        <circle cx="100" cy="100" />
-        <circle cx="400" cy="100" />
-        <circle cx="150" cy="200" />
-        <circle cx="450" cy="200" />
-        <circle cx="200" cy="300" />
-        <circle cx="500" cy="300" />
-        <circle cx="250" cy="400" />
-        <circle cx="550" cy="400" />
-        <circle cx="300" cy="500" />
-        <circle cx="600" cy="500" />
-        <circle cx="600" cy="100" />
-        <circle cx="900" cy="100" />
-        <circle cx="650" cy="200" />
-        <circle cx="950" cy="200" />
-        <circle cx="600" cy="300" />
-        <circle cx="900" cy="300" />
-      </svg>
-    );
-  };
-
-  const FloatingIcon = ({ icon, className = "", delay = "0s" }: { icon: React.ReactNode, className?: string, delay?: string }) => (
+function FloatingIcon({ icon, className = "", delay = "0s" }: FloatingIconProps) {
+  return (
     <div className={`hidden sm:block absolute floating opacity-40 ${className}`} style={{ animationDelay: delay }}>
       <div className="bg-slate-800/40 p-3 rounded-lg border border-cyan-400/10 backdrop-blur-sm">
         {icon}
       </div>
     </div>
   );
+}
+
+function NeuralNetwork() {
+  const paths = [
+    "M100,100 C200,150 300,50 400,100",
+    "M150,200 C250,250 350,150 450,200",
+    "M200,300 C300,350 400,250 500,300",
+    "M250,400 C350,450 450,350 550,400",
+    "M300,500 C400,550 500,450 600,500",
+    "M100,100 C150,200 100,300 150,400",
+    "M400,100 C450,200 400,300 450,400",
+    "M150,200 C200,300 150,400 200,500",
+    "M450,200 C500,300 450,400 500,500",
+    "M600,100 C700,150 800,50 900,100",
+    "M650,200 C750,250 850,150 950,200",
+    "M600,300 C700,350 800,250 900,300"
+  ];
+
+  return (
+    <svg className="neural-network" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
+      {paths.map((d, i) => (
+        <g key={i}>
+          <path id={`path-${i}`} d={d} style={{ animationDelay: `${i * 0.5}s` }} />
+          <circle className="moving-dot" r="4" style={{ animationDelay: `${i * 0.5}s` }}>
+            <animateMotion
+              dur="4s"
+              repeatCount="indefinite"
+              path={d}
+              rotate="auto"
+              begin={`${i * 0.5}s`}
+            />
+          </circle>
+          <circle className="glowing-dot" r="6" style={{ animationDelay: `${i * 0.5}s` }}>
+            <animateMotion
+              dur="4s"
+              repeatCount="indefinite"
+              path={d}
+              rotate="auto"
+              begin={`${i * 0.5}s`}
+            />
+          </circle>
+        </g>
+      ))}
+      
+      {/* Static nodes */}
+      <circle cx="100" cy="100" />
+      <circle cx="400" cy="100" />
+      <circle cx="150" cy="200" />
+      <circle cx="450" cy="200" />
+      <circle cx="200" cy="300" />
+      <circle cx="500" cy="300" />
+      <circle cx="250" cy="400" />
+      <circle cx="550" cy="400" />
+      <circle cx="300" cy="500" />
+      <circle cx="600" cy="500" />
+      <circle cx="600" cy="100" />
+      <circle cx="900" cy="100" />
+      <circle cx="650" cy="200" />
+      <circle cx="950" cy="200" />
+      <circle cx="600" cy="300" />
+      <circle cx="900" cy="300" />
+    </svg>
+  );
+}
+
+function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const visibleSections = useIntersectionObserver();
 
   return (
     <div className="min-h-screen bg-slate-900 text-white relative overflow-hidden">
