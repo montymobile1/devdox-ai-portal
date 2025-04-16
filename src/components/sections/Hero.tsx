@@ -1,6 +1,5 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
-import { SignUp } from '@clerk/clerk-react';
 
 interface HeroProps {
   readonly onSignUpClick: () => void;
