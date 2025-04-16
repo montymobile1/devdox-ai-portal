@@ -15,11 +15,11 @@ DevDox.ai is an AI-powered development assistant that helps developers automate 
 
 ## Tech Stack
 
-- React 18
-- TypeScript
-- Vite
-- Tailwind CSS
-- Lucide React Icons
+- React 18 with TypeScript
+- Vite for build tooling
+- Tailwind CSS for styling
+- Clerk for authentication
+- Lucide React for icons
 
 ## Getting Started
 
@@ -33,12 +33,18 @@ git clone https://github.com/montymobile1/devdox-ai-portal.git
 npm install
 ```
 
-3. Start the development server
+3. Set up environment variables
+Create a `.env` file in the root directory with:
+```
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key_here
+```
+
+4. Start the development server
 ```bash
 npm run dev
 ```
 
-4. Build for production
+5. Build for production
 ```bash
 npm run build
 ```
@@ -50,12 +56,55 @@ devdox-ai/
 ├── public/
 │   └── logo.png
 ├── src/
-│   ├── App.tsx           # Main application component
-│   ├── main.tsx         # Application entry point
-│   └── index.css        # Global styles and animations
-├── package.json
-└── README.md
+│   ├── components/
+│   │   ├── auth/
+│   │   │   └── AuthButtons.tsx       # Authentication-related components
+│   │   ├── background/
+│   │   │   ├── NeuralNetwork.tsx     # Neural network animation
+│   │   │   └── FloatingIcons.tsx     # Floating icons animation
+│   │   ├── layout/
+│   │   │   ├── Navigation.tsx        # Main navigation component
+│   │   │   └── Footer.tsx           # Footer component
+│   │   └── sections/
+│   │       ├── Hero.tsx             # Hero section
+│   │       ├── Features.tsx         # Features section
+│   │       ├── HowItWorks.tsx       # How it works section
+│   │       └── CallToAction.tsx     # Call to action section
+│   ├── hooks/
+│   │   └── useIntersectionObserver.ts # Custom hook for section visibility
+│   ├── App.tsx                      # Main application component
+│   ├── main.tsx                     # Application entry point
+│   └── index.css                    # Global styles and animations
+├── .env                             # Environment variables
+├── package.json                     # Project dependencies
+└── README.md                        # Project documentation
 ```
+
+## Component Architecture
+
+The application follows a modular component architecture:
+
+- **Background Components**: Handle visual effects and animations
+- **Auth Components**: Manage authentication flows and user state
+- **Layout Components**: Define the overall structure and navigation
+- **Section Components**: Implement individual page sections
+- **Hooks**: Custom React hooks for shared functionality
+
+## Authentication
+
+Authentication is handled through Clerk, providing:
+- Email/password authentication
+- User session management
+- Protected routes and components
+- Dashboard access control
+
+## Styling
+
+The project uses Tailwind CSS with:
+- Responsive design patterns
+- Custom animations
+- Consistent color scheme
+- Dark mode optimization
 
 ## Contributing
 
