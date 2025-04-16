@@ -43,10 +43,21 @@ export function Navigation({
       </div>
 
       {isMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-slate-800 border-t border-slate-700 p-4 space-y-4 shadow-lg z-50">
-          <a href="#features" className="block py-2 hover:text-cyan-400 transition-colors">Features</a>
-          <a href="#how-it-works" className="block py-2 hover:text-cyan-400 transition-colors">How it Works</a>
-          <AuthButtons onSignInClick={onSignInClick} showDashboardHint={showDashboardHint} isMobile />
+        <div className="md:hidden fixed top-[72px] left-0 right-0 bottom-0 bg-slate-900/95 backdrop-blur-sm border-t border-slate-700 p-6 space-y-6 z-50 overflow-y-auto">
+          <div className="flex flex-col space-y-4">
+            <a href="#features" className="text-lg font-medium hover:text-cyan-400 transition-colors">Features</a>
+            <a href="#how-it-works" className="text-lg font-medium hover:text-cyan-400 transition-colors">How it Works</a>
+          </div>
+          <div className="pt-4 border-t border-slate-700">
+            <AuthButtons 
+              onSignInClick={() => {
+                onSignInClick();
+                onMenuToggle();
+              }} 
+              showDashboardHint={showDashboardHint} 
+              isMobile 
+            />
+          </div>
         </div>
       )}
     </nav>
