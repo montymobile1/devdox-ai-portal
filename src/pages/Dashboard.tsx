@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react';
-import { Menu } from 'lucide-react';
 import { DashboardHeader } from '../components/dashboard/DashboardHeader';
 import { DashboardNavigation } from '../components/dashboard/DashboardNavigation';
 import { RepositoryList } from '../components/dashboard/RepositoryList';

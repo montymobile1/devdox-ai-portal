@@ -47,14 +47,13 @@ export function DashboardNavigation({ isOpen, onClose }: Readonly<DashboardNavig
   return (
     <>
       {/* Mobile Navigation */}
-      <div
-        role="button"
-        tabIndex={0}
+      <button
         className={`lg:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
           isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
         onKeyDown={handleKeyDown}
+        aria-label="Close navigation"
       />
       <nav
         className={`lg:hidden fixed inset-y-0 left-0 w-64 bg-slate-900 p-4 transform transition-all duration-300 ease-in-out z-50 ${mobileNavClasses}`}
