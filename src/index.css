@@ -50,6 +50,15 @@
   }
 }
 
+@keyframes slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
 .workflow-line {
   position: absolute;
   height: 1px;
@@ -113,4 +122,8 @@ html {
 
 .animate-pulse {
   animation: gentle-pulse 2s infinite;
+}
+
+.animate-slide {
+  animation: slide 3s linear infinite;
 }

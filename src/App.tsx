@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SignIn, SignUp } from '@clerk/clerk-react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { useIntersectionObserver } from './hooks/useIntersectionObserver';
 import { NeuralNetwork } from './components/background/NeuralNetwork';
 import { FloatingIconsLeft, FloatingIconsRight } from './components/background/FloatingIcons';
@@ -9,13 +10,15 @@ import { Features } from './components/sections/Features';
 import { HowItWorks } from './components/sections/HowItWorks';
 import { CallToAction } from './components/sections/CallToAction';
 import { Footer } from './components/layout/Footer';
+import { Dashboard } from './pages/Dashboard';
 
-function App() {
+function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showDashboardHint, setShowDashboardHint] = useState(false);
   const visibleSections = useIntersectionObserver();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -27,6 +30,10 @@ function App() {
 
   const handleSignUpClick = () => {
     setShowSignUp(true);
+  };
+
+  const handleDashboardClick = () => {
+    navigate('/dashboard');
   };
 
   return (
@@ -41,6 +48,7 @@ function App() {
           showDashboardHint={showDashboardHint}
           onMenuToggle={() => setIsMenuOpen(!isMenuOpen)}
           onSignInClick={() => setShowSignIn(true)}
+          onDashboardClick={handleDashboardClick}
         />
 
         {showSignIn && (
@@ -78,9 +86,20 @@ function App() {
           <CallToAction isVisible={visibleSections.has('cta')} onSignUpClick={handleSignUpClick} />
         </main>
 
-        <Footer />
+        <Footer isDark={true} />
       </div>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/dashboard/*" element={<Dashboard />} />
+      </Routes>
+    </Router>
   );
 }
 

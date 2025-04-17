@@ -4,11 +4,17 @@ import { LogOut, ArrowRight } from 'lucide-react';
 
 interface AuthButtonsProps {
   readonly onSignInClick: () => void;
+  readonly onDashboardClick: () => void;
   readonly showDashboardHint: boolean;
   readonly isMobile?: boolean;
 }
 
-export function AuthButtons({ onSignInClick, showDashboardHint, isMobile = false }: Readonly<AuthButtonsProps>) {
+export function AuthButtons({ 
+  onSignInClick, 
+  onDashboardClick,
+  showDashboardHint, 
+  isMobile = false 
+}: Readonly<AuthButtonsProps>) {
   const { signOut } = useClerk();
 
   const handleSignOut = () => {
@@ -35,7 +41,10 @@ export function AuthButtons({ onSignInClick, showDashboardHint, isMobile = false
       </SignedOut>
       <SignedIn>
         <div className={containerClasses}>
-          <button className={dashboardButtonClasses}>
+          <button 
+            onClick={onDashboardClick}
+            className={dashboardButtonClasses}
+          >
             <span>Dashboard</span>
             <ArrowRight className={`w-4 h-4 transition-transform ${
               showDashboardHint ? 'translate-x-1' : ''

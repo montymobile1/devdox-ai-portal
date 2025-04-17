@@ -7,13 +7,15 @@ interface NavigationProps {
   readonly showDashboardHint: boolean;
   readonly onMenuToggle: () => void;
   readonly onSignInClick: () => void;
+  readonly onDashboardClick: () => void;
 }
 
 export function Navigation({ 
   isMenuOpen, 
   showDashboardHint, 
   onMenuToggle, 
-  onSignInClick 
+  onSignInClick,
+  onDashboardClick
 }: Readonly<NavigationProps>) {
   return (
     <nav className="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
@@ -31,7 +33,11 @@ export function Navigation({
         <div className="hidden md:flex items-center space-x-8">
           <a href="#features" className="hover:text-cyan-400 transition-colors">Features</a>
           <a href="#how-it-works" className="hover:text-cyan-400 transition-colors">How it Works</a>
-          <AuthButtons onSignInClick={onSignInClick} showDashboardHint={showDashboardHint} />
+          <AuthButtons 
+            onSignInClick={onSignInClick} 
+            onDashboardClick={onDashboardClick}
+            showDashboardHint={showDashboardHint} 
+          />
         </div>
 
         <button 
@@ -53,7 +59,11 @@ export function Navigation({
               onSignInClick={() => {
                 onSignInClick();
                 onMenuToggle();
-              }} 
+              }}
+              onDashboardClick={() => {
+                onDashboardClick();
+                onMenuToggle();
+              }}
               showDashboardHint={showDashboardHint} 
               isMobile 
             />
