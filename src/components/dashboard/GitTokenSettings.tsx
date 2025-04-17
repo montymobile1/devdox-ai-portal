@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Plus } from 'lucide-react';
 
 interface GitToken {
+  id: string;
   label: string;
   token: string;
   provider: 'github' | 'gitlab';
@@ -10,12 +11,14 @@ interface GitToken {
 
 const mockTokens: GitToken[] = [
   {
+    id: 'token_1',
     label: 'Personal GitHub Token',
     token: 'ghp_1234567890abcdef1234567890abcdef123456',
     provider: 'github',
     createdAt: '2024-03-15',
   },
   {
+    id: 'token_2',
     label: 'Work GitLab Token',
     token: 'glpat-1234567890abcdef1234567890abcdef123456',
     provider: 'gitlab',
@@ -26,7 +29,7 @@ const mockTokens: GitToken[] = [
 interface AddTokenModalProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
-  readonly onSave: (token: Omit<GitToken, 'createdAt'>) => void;
+  readonly onSave: (token: Omit<GitToken, 'createdAt' | 'id'>) => void;
 }
 
 function AddTokenModal({ isOpen, onClose, onSave }: Readonly<AddTokenModalProps>) {
@@ -53,10 +56,11 @@ function AddTokenModal({ isOpen, onClose, onSave }: Readonly<AddTokenModalProps>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="token-label" className="block text-sm font-medium text-gray-700 mb-2">
                 Label
               </label>
               <input
+                id="token-label"
                 type="text"
                 value={label}
                 onChange={(e) => setLabel(e.target.value)}
@@ -67,39 +71,44 @@ function AddTokenModal({ isOpen, onClose, onSave }: Readonly<AddTokenModalProps>
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Provider
-              </label>
-              <div className="flex space-x-4">
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    value="github"
-                    checked={provider === 'github'}
-                    onChange={(e) => setProvider(e.target.value as 'github' | 'gitlab')}
-                    className="text-cyan-500 focus:ring-cyan-500"
-                  />
-                  <span>GitHub</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    value="gitlab"
-                    checked={provider === 'gitlab'}
-                    onChange={(e) => setProvider(e.target.value as 'github' | 'gitlab')}
-                    className="text-cyan-500 focus:ring-cyan-500"
-                  />
-                  <span>GitLab</span>
-                </label>
-              </div>
+              <fieldset>
+                <legend className="block text-sm font-medium text-gray-700 mb-2">
+                  Provider
+                </legend>
+                <div className="flex space-x-4">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="provider"
+                      value="github"
+                      checked={provider === 'github'}
+                      onChange={(e) => setProvider(e.target.value as 'github' | 'gitlab')}
+                      className="text-cyan-500 focus:ring-cyan-500"
+                    />
+                    <span>GitHub</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="provider"
+                      value="gitlab"
+                      checked={provider === 'gitlab'}
+                      onChange={(e) => setProvider(e.target.value as 'github' | 'gitlab')}
+                      className="text-cyan-500 focus:ring-cyan-500"
+                    />
+                    <span>GitLab</span>
+                  </label>
+                </div>
+              </fieldset>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="token-value" className="block text-sm font-medium text-gray-700 mb-2">
                 Token
               </label>
               <div className="flex items-center space-x-2">
                 <input
+                  id="token-value"
                   type={showToken ? 'text' : 'password'}
                   value={token}
                   onChange={(e) => setToken(e.target.value)}
@@ -111,6 +120,7 @@ function AddTokenModal({ isOpen, onClose, onSave }: Readonly<AddTokenModalProps>
                   type="button"
                   onClick={() => setShowToken(!showToken)}
                   className="p-2 text-gray-500 hover:text-gray-700"
+                  aria-label={showToken ? 'Hide token' : 'Show token'}
                 >
                   {showToken ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -143,9 +153,10 @@ export function GitTokenSettings() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tokens, setTokens] = useState<GitToken[]>(mockTokens);
 
-  const handleAddToken = (newToken: Omit<GitToken, 'createdAt'>) => {
-    const tokenWithDate = {
+  const handleAddToken = (newToken: Omit<GitToken, 'createdAt' | 'id'>) => {
+    const tokenWithDate: GitToken = {
       ...newToken,
+      id: `token_${Date.now()}`,
       createdAt: new Date().toISOString().split('T')[0],
     };
     setTokens([...tokens, tokenWithDate]);
@@ -165,9 +176,9 @@ export function GitTokenSettings() {
       </div>
 
       <div className="grid gap-6">
-        {tokens.map((token, index) => (
+        {tokens.map((token) => (
           <div
-            key={index}
+            key={token.id}
             className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-cyan-400 transition-colors"
           >
             <div className="mb-4">
