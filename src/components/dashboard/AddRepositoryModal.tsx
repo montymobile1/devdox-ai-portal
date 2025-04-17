@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X } from 'lucide-react';
 
 interface GitToken {
+  id: string;
   label: string;
   token: string;
   provider: 'github' | 'gitlab';
@@ -10,12 +11,14 @@ interface GitToken {
 
 const mockTokens: GitToken[] = [
   {
+    id: 'token_1',
     label: 'Personal GitHub Token',
     token: 'ghp_1234567890abcdef1234567890abcdef123456',
     provider: 'github',
     createdAt: '2024-03-15',
   },
   {
+    id: 'token_2',
     label: 'Work GitLab Token',
     token: 'glpat-1234567890abcdef1234567890abcdef123456',
     provider: 'gitlab',
@@ -30,7 +33,7 @@ interface AddRepositoryModalProps {
 
 export function AddRepositoryModal({ isOpen, onClose }: AddRepositoryModalProps) {
   const [selectedToken, setSelectedToken] = useState('');
-  const [url, setUrl] = useState('');
+  const [setUrl] = useState('');
   const [repositories, setRepositories] = useState<string[]>([]);
   const [selectedRepo, setSelectedRepo] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -92,9 +95,9 @@ export function AddRepositoryModal({ isOpen, onClose }: AddRepositoryModalProps)
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
                 required
               >
-                <option value="">Select a token</option>
-                {mockTokens.map((token, index) => (
-                  <option key={index} value={token.token}>
+                <option key="default" value="">Select a token</option>
+                {mockTokens.map((token) => (
+                  <option key={token.id} value={token.token}>
                     {token.label} ({token.provider})
                   </option>
                 ))}
@@ -121,7 +124,7 @@ export function AddRepositoryModal({ isOpen, onClose }: AddRepositoryModalProps)
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
                     required
                   >
-                    <option value="">Select a repository</option>
+                    <option key="default-repo" value="">Select a repository</option>
                     {repositories.map((repo) => (
                       <option key={repo} value={repo}>
                         {repo}
