@@ -26,10 +26,22 @@ interface AddApiKeyModalProps {
   readonly onSave: (newKey: string) => void;
 }
 
+function generateSecureKey(length: number = 32): string {
+  // Create a typed array of the required length
+  const randomBytes = new Uint8Array(length);
+  // Fill it with cryptographically secure random values
+  crypto.getRandomValues(randomBytes);
+  // Convert to base64 and remove non-alphanumeric characters
+  const base64 = btoa(String.fromCharCode(...randomBytes))
+    .replace(/[+/]/g, '') // Remove + and /
+    .substring(0, length); // Ensure exact length
+  return `sk_test_${base64}`;
+}
+
 function AddApiKeyModal({ isOpen, onClose, onSave }: Readonly<AddApiKeyModalProps>) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newKey = `sk_test_${Math.random().toString(36).substring(2)}`;
+    const newKey = generateSecureKey();
     onSave(newKey);
     onClose();
   };
