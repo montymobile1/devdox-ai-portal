@@ -1,119 +1,220 @@
-# DevDox.ai - 24/7 Dev Power in Your Pocket
+# DevDox AI Portal
 
-![DevDox.ai](https://github.com/montymobile1/devdox-ai-portal/blob/f92d27d2f4f23229f8f83f2db3dd378c26a8cd03/public/logo.png)
+## Overview
 
-DevDox.ai is an AI-powered development assistant that helps developers automate code reviews, documentation, and feature development. It seamlessly integrates with your existing workflow and provides intelligent suggestions based on your codebase.
+The DevDox AI Portal is the user-facing frontend component of the DevDox AI platform. It provides a sleek, intuitive web interface for users to manage their accounts, connect Git repositories, configure preferences, and monitor usage. This portal serves as the primary entry point for developers to interact with the DevDox AI ecosystem.
 
-## Features
+## Purpose and Functionality
 
-- 🤖 **Smart Code Reviews** - Automated code analysis and suggestions based on best practices
-- 💻 **Feature Development** - AI-assisted feature implementation with context-aware code generation
-- 🔄 **Code Refactoring** - Intelligent code restructuring while maintaining functionality
-- 📝 **Documentation Generation** - Automatic creation and maintenance of documentation
-- 🧠 **AI Code Analysis** - Deep understanding of your codebase for contextual suggestions
-- ✅ **Quality Assurance** - Continuous code quality monitoring and improvement recommendations
+The DevDox AI Portal is designed to:
 
-## Tech Stack
+- Provide a welcoming landing page for new users
+- Enable user account creation and authentication (via Git OAuth)
+- Allow users to manage their Git tokens and repository connections
+- Configure code style preferences and project settings
+- Monitor token usage and activity statistics
+- Access administrative functions (for admin users)
+- Serve as the central hub for all user interactions with the DevDox AI platform
 
-- React 18 with TypeScript
-- Vite for build tooling
-- Tailwind CSS for styling
-- Clerk for authentication
-- Lucide React for icons
+## Technology Stack
 
-## Getting Started
+- **Framework**: React 18+
+- **Build Tool**: Vite
+- **Language**: TypeScript
+- **UI Components**: 
+  - Tailwind CSS
+  - Headless UI / Radix UI
+- **State Management**: 
+  - React Query (for API data)
+  - Context API / Zustand (for application state)
+- **Testing**: 
+  - Vitest
+  - React Testing Library
+- **Additional Libraries**:
+  - Axios (API requests)
+  - React Router (routing)
+  - react-hook-form (form handling)
+  - zod (validation)
+  - recharts (visualizations)
 
-1. Clone the repository
+## Installation and Setup
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm 8+ or yarn 1.22+
+- Git
+
+### Development Setup
+
 ```bash
+# Clone the repository
 git clone https://github.com/montymobile1/devdox-ai-portal.git
-```
+cd devdox-ai-portal
 
-2. Install dependencies
-```bash
+# Install dependencies
 npm install
-```
+# or
+yarn install
 
-3. Set up environment variables
-Create a `.env` file in the root directory with:
-```
-VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key_here
-```
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your configuration
 
-4. Start the development server
-```bash
+# Start the development server
 npm run dev
+# or
+yarn dev
 ```
 
-5. Build for production
+The development server will start at `http://localhost:5173` by default.
+
+### Build for Production
+
 ```bash
+# Create a production build
 npm run build
-```
+# or
+yarn build
 
-## Project Structure
-
-```
-devdox-ai/
-├── public/
-│   └── logo.png
-├── src/
-│   ├── components/
-│   │   ├── auth/
-│   │   │   └── AuthButtons.tsx       # Authentication-related components
-│   │   ├── background/
-│   │   │   ├── NeuralNetwork.tsx     # Neural network animation
-│   │   │   └── FloatingIcons.tsx     # Floating icons animation
-│   │   ├── layout/
-│   │   │   ├── Navigation.tsx        # Main navigation component
-│   │   │   └── Footer.tsx           # Footer component
-│   │   └── sections/
-│   │       ├── Hero.tsx             # Hero section
-│   │       ├── Features.tsx         # Features section
-│   │       ├── HowItWorks.tsx       # How it works section
-│   │       └── CallToAction.tsx     # Call to action section
-│   ├── hooks/
-│   │   └── useIntersectionObserver.ts # Custom hook for section visibility
-│   ├── App.tsx                      # Main application component
-│   ├── main.tsx                     # Application entry point
-│   └── index.css                    # Global styles and animations
-├── .env                             # Environment variables
-├── package.json                     # Project dependencies
-└── README.md                        # Project documentation
+# Preview the production build
+npm run preview
+# or
+yarn preview
 ```
 
 ## Component Architecture
 
-The application follows a modular component architecture:
+The portal uses a modular component architecture:
 
-- **Background Components**: Handle visual effects and animations
-- **Auth Components**: Manage authentication flows and user state
-- **Layout Components**: Define the overall structure and navigation
-- **Section Components**: Implement individual page sections
-- **Hooks**: Custom React hooks for shared functionality
+```
+devdox-ai-portal/
+├── src/
+│   ├── components/      # Reusable UI components
+│   │   ├── common/      # Generic components (Button, Input, etc.)
+│   │   ├── dashboard/   # Dashboard-specific components
+│   │   └── layout/      # Layout components (Header, Sidebar, etc.)
+│   ├── pages/           # Page components
+│   ├── hooks/           # Custom React hooks
+│   ├── api/             # API integration
+│   ├── context/         # React Context providers
+│   ├── utils/           # Utility functions
+│   ├── types/           # TypeScript type definitions
+│   ├── styles/          # Global styles
+│   ├── App.tsx          # Application entry point
+│   └── main.tsx         # Root rendering
+├── public/              # Static assets
+├── index.html           # HTML template
+├── vite.config.ts       # Vite configuration
+├── tsconfig.json        # TypeScript configuration
+└── package.json         # Project dependencies
+```
 
-## Authentication
+## Key Features and Pages
 
-Authentication is handled through Clerk, providing:
-- Email/password authentication
-- User session management
-- Protected routes and components
-- Dashboard access control
+1. **Landing Page**: 
+   - Product information and marketing content
+   - Call-to-action for sign-up/login
 
-## Styling
+2. **Authentication**:
+   - OAuth integration with GitHub/GitLab
+   - Account creation and management
 
-The project uses Tailwind CSS with:
-- Responsive design patterns
-- Custom animations
-- Consistent color scheme
-- Dark mode optimization
+3. **Dashboard**:
+   - Overview of connected repositories
+   - Usage statistics and activity charts
+   - Quick actions for common operations
 
-## Contributing
+4. **Repository Management**:
+   - Connect/disconnect Git repositories
+   - Configure per-repository settings
+   - View repository analytics
 
-We welcome contributions! Please feel free to submit a Pull Request.
+5. **Preference Settings**:
+   - Code style preferences
+   - Documentation format configuration
+   - Automation rules
+
+6. **Administration** (admin users):
+   - User management
+   - System-wide settings
+   - Usage reporting
+
+## Interaction with Portal API
+
+The portal communicates with the [DevDox AI Portal API](https://github.com/montymobile1/devdox-ai-portal-api) for all data operations. Key aspects of this interaction include:
+
+- **Authentication**: OAuth token handling and session management
+- **Repository Data**: Fetching and managing repository connections
+- **User Preferences**: Storing and retrieving user configuration
+- **Analytics**: Retrieving usage statistics and activity data
+- **Admin Functions**: User and system management (for admin users)
+
+API requests are centralized in the `src/api` directory, with hooks for data fetching in `src/hooks/api`.
+
+## Configuration
+
+The portal can be configured through environment variables:
+
+- `VITE_API_URL`: URL of the DevDox AI Portal API
+- `VITE_GITHUB_CLIENT_ID`: GitHub OAuth client ID
+- `VITE_GITLAB_CLIENT_ID`: GitLab OAuth client ID
+- `VITE_AUTH_CALLBACK_URL`: OAuth callback URL
+- `VITE_ENABLE_ANALYTICS`: Enable/disable analytics (boolean)
+
+Additional configuration options can be found in `src/config/index.ts`.
+
+## Development Guidelines
+
+### Code Style
+
+This project follows a consistent code style enforced by ESLint and Prettier:
+
+```bash
+# Run linting
+npm run lint
+# or
+yarn lint
+
+# Format code
+npm run format
+# or
+yarn format
+```
+
+### Component Development
+
+- Use functional components with hooks
+- Follow the container/presentational component pattern
+- Keep components small and focused on a single responsibility
+- Use TypeScript for all components and utilities
+
+### Testing
+
+```bash
+# Run tests
+npm run test
+# or
+yarn test
+
+# Run tests with coverage
+npm run test:coverage
+# or
+yarn test:coverage
+```
+
+### Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature-name`
+3. Commit your changes: `git commit -m 'Add some feature'`
+4. Push to the branch: `git push origin feature/your-feature-name`
+5. Submit a pull request
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+[MIT License](LICENSE)
 
-## Support
+---
 
-For support, please email support@devdox.ai or open an issue in the repository.
+*Related Jira Issue: [DAP-5](https://montyholding.atlassian.net/browse/DAP-5)*
