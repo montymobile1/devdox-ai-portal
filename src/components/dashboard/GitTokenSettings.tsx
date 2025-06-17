@@ -7,32 +7,34 @@ interface AddTokenModalProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
   readonly onSave: (token: CreateGitTokenRequest) => Promise<void>;
-  readonly loading: boolean;
 }
 
-function AddTokenModal({ isOpen, onClose, onSave, loading }: Readonly<AddTokenModalProps>) {
+function AddTokenModal({ isOpen, onClose, onSave }: Readonly<AddTokenModalProps>) {
   const [showToken, setShowToken] = useState(false);
   const [label, setLabel] = useState('');
-  const [token_value, setTokenValue] = useState('');
-  const [git_hosting, setGitHosting] = useState<'github' | 'gitlab'>('github');
+  const [saving, setSaving] = useState(false);
+  const [token_value, setToken_value] = useState('');
+  const [git_hosting, setGit_hosting] = useState<'github' | 'gitlab'>('github');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await onSave({ label, token_value, git_hosting });
       setLabel('');
-      setTokenValue('');
-      setGitHosting('github');
+      setToken_value('');
+      setGit_hosting('github');
       onClose();
     } catch (error) {
       // Error is handled by the parent component
+       console.error(error);
+       setSaving(false); // ✅ stop saving
     }
   };
 
   const handleClose = () => {
     setLabel('');
-    setTokenValue('');
-    setGitHosting('github');
+    setToken_value('');
+    setGit_hosting('github');
     onClose();
   };
 
@@ -56,12 +58,12 @@ function AddTokenModal({ isOpen, onClose, onSave, loading }: Readonly<AddTokenMo
                 placeholder="e.g., Personal GitHub Token"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
                 required
-                disabled={loading}
+                disabled={saving}
               />
             </div>
 
             <div>
-              <fieldset disabled={loading}>
+              <fieldset disabled={saving}>
                 <legend className="block text-sm font-medium text-gray-700 mb-2">
                   Provider
                 </legend>
@@ -72,7 +74,7 @@ function AddTokenModal({ isOpen, onClose, onSave, loading }: Readonly<AddTokenMo
                       name="git_hosting"
                       value="github"
                       checked={git_hosting === 'github'}
-                      onChange={(e) => setGitHosting(e.target.value as 'github' | 'gitlab')}
+                      onChange={(e) => setGit_hosting(e.target.value as 'github' | 'gitlab')}
                       className="text-cyan-500 focus:ring-cyan-500"
                     />
                     <span>GitHub</span>
@@ -83,7 +85,7 @@ function AddTokenModal({ isOpen, onClose, onSave, loading }: Readonly<AddTokenMo
                       name="git_hosting"
                       value="gitlab"
                       checked={git_hosting === 'gitlab'}
-                      onChange={(e) => setGitHosting(e.target.value as 'github' | 'gitlab')}
+                      onChange={(e) => setGit_hosting(e.target.value as 'github' | 'gitlab')}
                       className="text-cyan-500 focus:ring-cyan-500"
                     />
                     <span>GitLab</span>
@@ -101,18 +103,18 @@ function AddTokenModal({ isOpen, onClose, onSave, loading }: Readonly<AddTokenMo
                   id="token_value"
                   type={showToken ? 'text' : 'password'}
                   value={token_value}
-                  onChange={(e) => setTokenValue(e.target.value)}
+                  onChange={(e) => setToken_value(e.target.value)}
                   placeholder="Enter your token"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
                   required
-                  disabled={loading}
+                  disabled={saving}
                 />
                 <button
                   type="button"
                   onClick={() => setShowToken(!showToken)}
                   className="p-2 text-gray-500 hover:text-gray-700 disabled:opacity-50"
                   aria-label={showToken ? 'Hide token' : 'Show token'}
-                  disabled={loading}
+                  disabled={saving}
                 >
                   {showToken ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -124,17 +126,17 @@ function AddTokenModal({ isOpen, onClose, onSave, loading }: Readonly<AddTokenMo
                 type="button"
                 onClick={handleClose}
                 className="px-4 py-2 text-gray-700 hover:text-gray-900 disabled:opacity-50"
-                disabled={loading}
+                disabled={saving}
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-                disabled={loading}
+                disabled={saving}
               >
-                {loading && <RefreshCw className="w-4 h-4 animate-spin" />}
-                <span>{loading ? 'Adding...' : 'Add Token'}</span>
+                {saving && <RefreshCw className="w-4 h-4 animate-spin" />}
+                <span>{saving ? 'Adding...' : 'Add Token'}</span>
               </button>
             </div>
           </div>
@@ -182,6 +184,8 @@ export function GitTokenSettings() {
         await deleteGitToken(tokenId);
       } catch (error) {
         // Error is handled by the hook
+        console.error(error);
+      throw error;
       } finally {
         setDeletingTokenId(null);
       }

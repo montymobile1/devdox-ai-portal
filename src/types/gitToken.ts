@@ -10,7 +10,7 @@ export interface GitToken {
 
 export interface GitTokenListResponse {
   data: {
-    tokens: GitToken[];
+    items: GitToken[];
     total: number;
     limit: number;
     offset: number;

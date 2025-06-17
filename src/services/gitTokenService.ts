@@ -14,7 +14,7 @@ export class GitTokenService {
         { limit, offset },
         token
       );
-      return response.data.items || [];
+      return response.data.items ?? [];
     } catch (error) {
       console.error('Error fetching git tokens:', error);
       throw new Error('Failed to fetch git tokens');
