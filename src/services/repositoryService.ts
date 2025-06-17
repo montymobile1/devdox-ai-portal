@@ -11,7 +11,9 @@ export class RepositoryService {
     try {
       const response = await apiService.get<RepositoryListResponse>(
         API_CONFIG.ENDPOINTS.REPOSITORIES,
-        { limit, offset },
+        Object.fromEntries(
+        Object.entries({ limit, offset }).filter(([, v]) => v !== undefined)
+        ),
         token
       );
 
@@ -25,7 +27,7 @@ export class RepositoryService {
   async analyzeRepository(token: string, repositoryId: string): Promise<void> {
     try {
       await apiService.post(
-        `${API_CONFIG.ENDPOINTS.ANALYZE_REPO}/${repositoryId}`,
+        `${API_CONFIG.ENDPOINTS.ANALYZE_REPO}/${encodeURIComponent(repositoryId)}`,
         {},
         token
       );

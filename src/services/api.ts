@@ -1,7 +1,7 @@
 import { API_CONFIG } from '../config/api';
 
 export class ApiService {
-  private baseUrl: string;
+  private readonly baseUrl: string;
 
   constructor(baseUrl: string = API_CONFIG.BASE_URL) {
     this.baseUrl = baseUrl;
@@ -12,7 +12,9 @@ export class ApiService {
 
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        url.searchParams.append(key, String(value));
+        if (value !== undefined && value !== null) {
+          url.searchParams.append(key, String(value));
+        }
       });
     }
 
@@ -37,8 +39,12 @@ export class ApiService {
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} - ${response.statusText}`);
     }
-
+      if (response.status === 204 || response.status === 205) {
+      // No content
+      return undefined as unknown as T;
+    }
     return response.json();
+
   }
   // Generic GET method
   async get<T>(endpoint: string, params?: Record<string, string | number>, token?: string): Promise<T> {
