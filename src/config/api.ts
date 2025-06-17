@@ -1,0 +1,11 @@
+export const API_CONFIG = {
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
+  ENDPOINTS: {
+    REPOSITORIES: '/api/v1/repos',
+    ANALYZE_REPO: '/api/v1/repos/analyze',
+  },
+  DEFAULT_PARAMS: {
+    LIMIT: 20,
+    OFFSET: 0,
+  },
+} as const;
