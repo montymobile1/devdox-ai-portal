@@ -182,6 +182,62 @@ npm run format
 yarn format
 ```
 
+## Deploying to Render
+
+This application is configured to deploy on Render as a Web Service using Express.js.
+
+### Prerequisites
+
+- Render account
+- GitHub repository with your code
+- Vite build configured with `dist` output directory
+
+### Deployment Steps
+
+1. **Connect Your Repository**
+   - Go to [Render Dashboard](https://dashboard.render.com/)
+   - Click "New +" → "Web Service"
+   - Connect your GitHub repository
+
+2. **Configure Web Service Settings**
+   - **Name**: Your app name
+   - **Environment**: `Node`
+   - **Region**: Choose your preferred region
+   - **Branch**: `main` (or your default branch)
+
+3. **Build & Deploy Configuration**
+   ```
+   Build Command: rm -rf node_modules yarn.lock && yarn install
+   Start Command: yarn build && yarn start
+   ```
+
+4. **Environment Variables** (if needed)
+   - Add any required environment variables
+   - Example: `NODE_ENV=production`
+
+### Server Configuration
+
+The app uses an Express.js server (`server.cjs`) that:
+- Serves static files from the `dist` directory
+- Handles client-side routing for React Router
+
+### Important Files
+
+- `server.cjs` - Express server for production
+- `package.json` - Contains build and start scripts
+- `dist/` - Built application files (generated during build)
+
+
+
+### Troubleshooting
+
+**Common Issues:**
+
+- **Build fails**: Ensure all dependencies are in `package.json`
+- **404 on routes**: Server handles SPA routing automatically
+- **Environment variables**: Add them in Render dashboard under "Environment"
+
+
 ### Component Development
 
 - Use functional components with hooks
