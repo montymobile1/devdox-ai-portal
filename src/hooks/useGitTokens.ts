@@ -30,6 +30,14 @@ export function useGitTokens(limit?: number, offset?: number) {
     }
   }, [getToken, limit, offset]);
 
+  function maskToken(token: string): string {
+    if (token.length <= 8) return token; // fallback for short tokens
+    const start = token.slice(0, 4);
+    const end = token.slice(-4);
+    const masked = '*'.repeat(token.length - 8);
+    return `${start}${masked}${end}`;
+  }
+
   const createGitToken = useCallback(async (gitTokenData: CreateGitTokenRequest) => {
     try {
       const token = await getToken();
@@ -39,7 +47,15 @@ export function useGitTokens(limit?: number, offset?: number) {
       }
 
       const newToken = await gitTokenService.createGitToken(token, gitTokenData);
-      setGitTokens(prev => [...prev, newToken]);
+      const newTokenGenerated: GitToken = {
+      id: newToken.id,
+      label: gitTokenData.label,
+      token: 'FFFFFFFFFFFFFFFF',
+      masked_token: maskToken(gitTokenData.token_value),
+      git_hosting: gitTokenData.git_hosting,
+      created_at: new Date().toISOString(),
+    };
+      setGitTokens(prev => [...prev, newTokenGenerated]);
 
       return newToken;
     } catch (err) {
