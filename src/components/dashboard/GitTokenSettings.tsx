@@ -19,7 +19,9 @@ function AddTokenModal({ isOpen, onClose, onSave }: Readonly<AddTokenModalProps>
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+       setSaving(true);
       await onSave({ label, token_value, git_hosting });
+
       setLabel('');
       setToken_value('');
       setGit_hosting('github');
@@ -27,7 +29,10 @@ function AddTokenModal({ isOpen, onClose, onSave }: Readonly<AddTokenModalProps>
     } catch (error) {
       // Error is handled by the parent component
        console.error(error);
-       setSaving(false); // ✅ stop saving
+
+    }
+    finally {
+       setSaving(false);//always reset, even on success (in case the modal stays open)
     }
   };
 
@@ -273,7 +278,6 @@ export function GitTokenSettings() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleAddToken}
-        loading={loading}
       />
     </div>
   );
