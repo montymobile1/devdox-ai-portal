@@ -56,7 +56,6 @@ export function AddRepositoryModal({ isOpen, onClose }: AddRepositoryModalProps)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle repository addition here
-    console.log('Selected Token:', selectedToken);
     console.log('Selected Repository:', selectedRepo);
     onClose();
     setSelectedToken('');

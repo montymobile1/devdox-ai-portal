@@ -60,7 +60,7 @@ export class ApiService {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: data ? JSON.stringify(data) : undefined,
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      headers: token ? {  'Content-Type': 'application/json',   Authorization: `Bearer ${token}` } : {},
     });
   }
 

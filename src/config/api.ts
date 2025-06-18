@@ -3,6 +3,7 @@ export const API_CONFIG = {
   ENDPOINTS: {
     REPOSITORIES: '/api/v1/repos',
     ANALYZE_REPO: '/api/v1/repos/analyze',
+    GIT_TOKENS: '/api/v1/git_tokens',
   },
   DEFAULT_PARAMS: {
     LIMIT: 20,
