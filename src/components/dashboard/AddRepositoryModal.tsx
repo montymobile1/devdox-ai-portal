@@ -1,67 +1,117 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { useAuth } from '@clerk/clerk-react';
+import { useGitTokens } from '../../hooks/useGitTokens';
+import { repositoryService } from '../../services/repositoryService';
 
-interface GitToken {
+interface GitRepository {
   id: string;
-  label: string;
-  token: string;
-  provider: 'github' | 'gitlab';
-  createdAt: string;
+  repo_name: string;
+  full_name: string;
+  description?: string;
+  private: boolean;
+  html_url: string;
 }
-
-const mockTokens: GitToken[] = [
-  {
-    id: 'token_1',
-    label: 'Personal GitHub Token',
-    token: 'ghp_1234567890abcdef1234567890abcdef123456',
-    provider: 'github',
-    createdAt: '2024-03-15',
-  },
-  {
-    id: 'token_2',
-    label: 'Work GitLab Token',
-    token: 'glpat-1234567890abcdef1234567890abcdef123456',
-    provider: 'gitlab',
-    createdAt: '2024-03-14',
-  },
-];
 
 interface AddRepositoryModalProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
+  readonly onRepositoryAdded?: () => void;
 }
 
-export function AddRepositoryModal({ isOpen, onClose }: AddRepositoryModalProps) {
+export function AddRepositoryModal({ isOpen, onClose, onRepositoryAdded }: AddRepositoryModalProps) {
+  const { gitTokens, loading: tokensLoading, error: tokensError } = useGitTokens();
+  const { userId, getToken } = useAuth();
   const [selectedToken, setSelectedToken] = useState('');
-  const [setUrl] = useState('');
-  const [repositories, setRepositories] = useState<string[]>([]);
+  const [gitRepositories, setGitRepositories] = useState<GitRepository[]>([]);
   const [selectedRepo, setSelectedRepo] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [repoError, setRepoError] = useState<string | null>(null);
+
+  const fetchGitRepositories = async (tokenId: string) => {
+    if (!tokenId || !userId) {
+      return;
+    }
+
+    setIsLoading(true);
+    setRepoError(null);
+
+    try {
+      const authToken = await getToken();
+
+      if (!authToken) {
+        throw new Error('Authentication token not available');
+      }
+
+      // Using repositoryService to fetch git repositories by token
+      const gitRepos = await repositoryService.getRepositoryById(authToken, tokenId);
+      setGitRepositories(Array.isArray(gitRepos) ? gitRepos : []);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch repositories';
+      setRepoError(errorMessage);
+      console.error('Repository fetch error:', error);
+      setGitRepositories([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleTokenChange = async (tokenId: string) => {
     setSelectedToken(tokenId);
-    setIsLoading(true);
-    // Simulate API call to fetch repositories
-    setTimeout(() => {
-      setRepositories([
-        'user/repo1',
-        'user/repo2',
-        'user/repo3',
-        'organization/repo4',
-      ]);
-      setIsLoading(false);
-    }, 1000);
+    setSelectedRepo('');
+    setGitRepositories([]);
+
+    if (tokenId) {
+      await fetchGitRepositories(tokenId);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle repository addition here
-    console.log('Selected Repository:', selectedRepo);
-    onClose();
-    setSelectedToken('');
-    setUrl('');
-    setSelectedRepo('');
-    setRepositories([]);
+
+    if (!selectedRepo || !selectedToken) {
+      return;
+    }
+
+    try {
+      const authToken = await getToken();
+
+      if (!authToken) {
+        throw new Error('Authentication token not available');
+      }
+
+      const selectedRepository = gitRepositories.find(repo => repo.full_name === selectedRepo);
+
+      if (!selectedRepository) {
+        throw new Error('Selected repository not found');
+      }
+
+      // Add repository using repositoryService
+      // You might need to add this method to your repositoryService
+      const repositoryData = {
+        git_token_id: selectedToken,
+        repository_url: selectedRepository.html_url,
+        repository_name: selectedRepository.repo_name,
+        full_name: selectedRepository.repo_name,
+        description: selectedRepository.description,
+        is_private: selectedRepository.private,
+      };
+
+      await repositoryService.createRepository(authToken, repositoryData);
+
+      // Call the callback to refresh parent component
+      onRepositoryAdded?.();
+
+      // Close modal and reset form
+      onClose();
+      setSelectedToken('');
+      setSelectedRepo('');
+      setGitRepositories([]);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add repository';
+      setRepoError(errorMessage);
+      console.error('Repository creation error:', error);
+    }
   };
 
   if (!isOpen) return null;
@@ -78,6 +128,17 @@ export function AddRepositoryModal({ isOpen, onClose }: AddRepositoryModalProps)
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {(tokensError || repoError) && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-600">
+              {tokensError && `Error loading tokens: ${tokensError}`}
+              {tokensError && repoError && ' | '}
+              {repoError && `Error loading repositories: ${repoError}`}
+            </p>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div className="space-y-6">
             <div>
@@ -87,20 +148,34 @@ export function AddRepositoryModal({ isOpen, onClose }: AddRepositoryModalProps)
               >
                 Select Git Token
               </label>
-              <select
-                id="git-token"
-                value={selectedToken}
-                onChange={(e) => handleTokenChange(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                required
-              >
-                <option key="default" value="">Select a token</option>
-                {mockTokens.map((token) => (
-                  <option key={token.id} value={token.token}>
-                    {token.label} ({token.provider})
+              {tokensLoading ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="w-6 h-6 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : (
+                <select
+                  id="git-token"
+                  value={selectedToken}
+                  onChange={(e) => handleTokenChange(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                  required
+                  disabled={gitTokens.length === 0}
+                >
+                  <option key="default" value="">
+                    {gitTokens.length === 0 ? 'No tokens available' : 'Select a token'}
                   </option>
-                ))}
-              </select>
+                  {gitTokens.map((token) => (
+                    <option key={token.id} value={token.id}>
+                      {token.label} ({token.git_hosting})
+                    </option>
+                  ))}
+                </select>
+              )}
+              {gitTokens.length === 0 && !tokensLoading && (
+                <p className="text-sm text-gray-500 mt-1">
+                  No git tokens found. Please add a token first.
+                </p>
+              )}
             </div>
 
             {selectedToken && (
@@ -115,6 +190,10 @@ export function AddRepositoryModal({ isOpen, onClose }: AddRepositoryModalProps)
                   <div className="flex items-center justify-center py-4">
                     <div className="w-6 h-6 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
                   </div>
+                ) : gitRepositories.length === 0 && selectedToken ? (
+                  <div className="text-center py-4">
+                    <p className="text-sm text-gray-500">No repositories found</p>
+                  </div>
                 ) : (
                   <select
                     id="repository"
@@ -124,9 +203,9 @@ export function AddRepositoryModal({ isOpen, onClose }: AddRepositoryModalProps)
                     required
                   >
                     <option key="default-repo" value="">Select a repository</option>
-                    {repositories.map((repo) => (
-                      <option key={repo} value={repo}>
-                        {repo}
+                    {gitRepositories.map((repo) => (
+                      <option key={repo.repo_name} value={repo.repo_name}>
+                        {repo.repo_name} {repo.private ? '(Private)' : '(Public)'}
                       </option>
                     ))}
                   </select>
@@ -145,7 +224,7 @@ export function AddRepositoryModal({ isOpen, onClose }: AddRepositoryModalProps)
             </button>
             <button
               type="submit"
-              disabled={!selectedToken || !selectedRepo}
+              disabled={!selectedToken || !selectedRepo || tokensLoading}
               className="bg-cyan-500 hover:bg-cyan-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition-colors"
             >
               Add Repository

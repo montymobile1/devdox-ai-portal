@@ -2,6 +2,7 @@ export const API_CONFIG = {
   BASE_URL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000',
   ENDPOINTS: {
     REPOSITORIES: '/api/v1/repos',
+    GIT_REPOS: '/api/v1/repos/git_repos/users',
     ANALYZE_REPO: '/api/v1/repos/analyze',
     GIT_TOKENS: '/api/v1/git_tokens',
   },
