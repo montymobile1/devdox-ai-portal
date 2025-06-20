@@ -57,9 +57,12 @@ export function AddRepositoryModal({ isOpen, onClose, onRepositoryAdded }: AddRe
       setGitRepositories(mappedRepos);
     } catch (error) {
      if (error instanceof Error && error.name === 'AbortError') return;
-      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch repositories';
-
-      setRepoError(errorMessage);
+     if (error instanceof Error) {
+          if (error.name === 'AbortError') return;
+          setRepoError(error.message);
+        } else {
+          setRepoError('Failed to fetch repositories');
+        }
       console.error('Repository fetch error:', error);
       setGitRepositories([]);
     } finally {
