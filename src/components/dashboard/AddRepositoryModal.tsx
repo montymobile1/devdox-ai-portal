@@ -58,13 +58,13 @@ export function AddRepositoryModal({ isOpen, onClose, onRepositoryAdded }: AddRe
     } catch (error) {
      if (error instanceof Error && error.name === 'AbortError') return;
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch repositories';
+
       setRepoError(errorMessage);
       console.error('Repository fetch error:', error);
       setGitRepositories([]);
     } finally {
       setIsLoading(false);
     }
-    return () => abortController.abort();
   };
 
   const handleTokenChange = async (tokenId: string) => {
