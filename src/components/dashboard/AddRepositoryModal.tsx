@@ -27,7 +27,7 @@ export function AddRepositoryModal({ isOpen, onClose, onRepositoryAdded }: AddRe
   const [selectedRepo, setSelectedRepo] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [repoError, setRepoError] = useState<string | null>(null);
-
+  const abortController = new AbortController();
   const fetchGitRepositories = async (tokenId: string) => {
     if (!tokenId || !userId) {
       return;
@@ -44,9 +44,19 @@ export function AddRepositoryModal({ isOpen, onClose, onRepositoryAdded }: AddRe
       }
 
       // TO Do : Add new repo and set GitRepositories
-      const gitRepos = await repositoryService.getRepositoriesByTokenId(authToken, tokenId);
-      setGitRepositories(Array.isArray(gitRepos) ? gitRepos : []);
+      const gitRepos = await repositoryService.getRepositoriesByTokenId(authToken, tokenId,abortController);
+      const mappedRepos: GitRepository[] = Array.isArray(gitRepos)
+        ? gitRepos.map((repo: any) => ({
+            // Map Repository properties to GitRepository properties
+            repo_name: repo.repo_name ,
+            private: repo.private,
+            // Add other required GitRepository properties as needed
+            ...repo
+          }))
+        : [];
+      setGitRepositories(mappedRepos);
     } catch (error) {
+     if (error instanceof Error && error.name === 'AbortError') return;
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch repositories';
       setRepoError(errorMessage);
       console.error('Repository fetch error:', error);
@@ -54,6 +64,7 @@ export function AddRepositoryModal({ isOpen, onClose, onRepositoryAdded }: AddRe
     } finally {
       setIsLoading(false);
     }
+    return () => abortController.abort();
   };
 
   const handleTokenChange = async (tokenId: string) => {
