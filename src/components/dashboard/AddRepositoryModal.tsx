@@ -80,24 +80,14 @@ export function AddRepositoryModal({ isOpen, onClose, onRepositoryAdded }: AddRe
         throw new Error('Authentication token not available');
       }
 
-      const selectedRepository = gitRepositories.find(repo => repo.full_name === selectedRepo);
+      const selectedRepository = gitRepositories.find(repo => repo.repo_name === selectedRepo);
 
       if (!selectedRepository) {
         throw new Error('Selected repository not found');
       }
 
-      // Add repository using repositoryService
-      // You might need to add this method to your repositoryService
-      const repositoryData = {
-        git_token_id: selectedToken,
-        repository_url: selectedRepository.html_url,
-        repository_name: selectedRepository.repo_name,
-        full_name: selectedRepository.repo_name,
-        description: selectedRepository.description,
-        is_private: selectedRepository.private,
-      };
+      // TO DO Add repository using repositoryService
 
-      await repositoryService.createRepository(authToken, repositoryData);
 
       // Call the callback to refresh parent component
       onRepositoryAdded?.();
@@ -113,6 +103,77 @@ export function AddRepositoryModal({ isOpen, onClose, onRepositoryAdded }: AddRe
       console.error('Repository creation error:', error);
     }
   };
+   // Extract repository selection rendering logic
+
+  const renderRepositorySelection = () => {
+
+    if (isLoading) {
+
+      return (
+
+        <div className="flex items-center justify-center py-4">
+
+          <div className="w-6 h-6 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+
+        </div>
+
+      );
+
+    }
+
+
+
+    if (gitRepositories.length === 0 && selectedToken) {
+
+      return (
+
+        <div className="text-center py-4">
+
+          <p className="text-sm text-gray-500">No repositories found</p>
+
+        </div>
+
+      );
+
+    }
+
+
+
+    return (
+
+      <select
+
+        id="repository"
+
+        value={selectedRepo}
+
+        onChange={(e) => setSelectedRepo(e.target.value)}
+
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+
+        required
+
+      >
+
+        <option key="default-repo" value="">Select a repository</option>
+
+        {gitRepositories.map((repo) => (
+
+          <option key={repo.repo_name} value={repo.repo_name}>
+
+            {repo.repo_name} {repo.private ? '(Private)' : '(Public)'}
+
+          </option>
+
+        ))}
+
+      </select>
+
+    );
+
+  };
+
+
 
   if (!isOpen) return null;
 
@@ -186,30 +247,7 @@ export function AddRepositoryModal({ isOpen, onClose, onRepositoryAdded }: AddRe
                 >
                   Select Repository
                 </label>
-                {isLoading ? (
-                  <div className="flex items-center justify-center py-4">
-                    <div className="w-6 h-6 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
-                  </div>
-                ) : gitRepositories.length === 0 && selectedToken ? (
-                  <div className="text-center py-4">
-                    <p className="text-sm text-gray-500">No repositories found</p>
-                  </div>
-                ) : (
-                  <select
-                    id="repository"
-                    value={selectedRepo}
-                    onChange={(e) => setSelectedRepo(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                    required
-                  >
-                    <option key="default-repo" value="">Select a repository</option>
-                    {gitRepositories.map((repo) => (
-                      <option key={repo.repo_name} value={repo.repo_name}>
-                        {repo.repo_name} {repo.private ? '(Private)' : '(Public)'}
-                      </option>
-                    ))}
-                  </select>
-                )}
+              {renderRepositorySelection()}
               </div>
             )}
           </div>
