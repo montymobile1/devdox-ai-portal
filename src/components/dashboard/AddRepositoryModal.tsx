@@ -43,8 +43,8 @@ export function AddRepositoryModal({ isOpen, onClose, onRepositoryAdded }: AddRe
         throw new Error('Authentication token not available');
       }
 
-      // Using repositoryService to fetch git repositories by token
-      const gitRepos = await repositoryService.getRepositoryById(authToken, tokenId);
+      // TO Do : Add new repo and set GitRepositories
+      const gitRepos = await repositoryService.getRepositoriesByTokenId(authToken, tokenId);
       setGitRepositories(Array.isArray(gitRepos) ? gitRepos : []);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch repositories';
