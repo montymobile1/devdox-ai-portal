@@ -37,18 +37,17 @@ export class RepositoryService {
     }
   }
 
-  async getRepositoryById(token: string, repositoryId: string): Promise<Repository> {
+  async getRepositoriesByTokenId(token: string, tokenId: string): Promise<Repository[]> {
     try {
-      const response = await apiService.get<{ data: Repository }>(
-        `${API_CONFIG.ENDPOINTS.REPOSITORIES}/${repositoryId}`,
+         const response = await apiService.get<{ data: { repos: Repository[] } }>(
+        `${API_CONFIG.ENDPOINTS.GIT_REPOS}/${tokenId}`,
         {},
         token
       );
-
-      return response.data;
+      return response.data.repos;
     } catch (error) {
-      console.error('Error fetching repository:', error);
-      throw new Error('Failed to fetch repository');
+      console.error('Error fetching repositories:', error);
+      throw new Error('Failed to fetch repositories');
     }
   }
 }
