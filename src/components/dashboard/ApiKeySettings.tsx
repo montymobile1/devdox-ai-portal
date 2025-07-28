@@ -1,49 +1,25 @@
 import React, { useState } from 'react';
-import { Plus, AlertCircle } from 'lucide-react';
+import { Plus, AlertCircle, Loader2 } from 'lucide-react';
+import { useApiKeys } from '../../hooks/useApiKeys';
 
-interface ApiKey {
-  id: string;
-  createdAt: string;
-  lastUsed: string | null;
-}
-
-const mockApiKeys: ApiKey[] = [
-  {
-    id: 'key_1',
-    createdAt: '2024-03-15',
-    lastUsed: '2024-03-20',
-  },
-  {
-    id: 'key_2',
-    createdAt: '2024-03-18',
-    lastUsed: null,
-  },
-];
 
 interface AddApiKeyModalProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
-  readonly onSave: (newKey: string) => void;
+  readonly onSave: () => Promise<void>;
+  readonly loading: boolean;
 }
 
-function generateSecureKey(length: number = 32): string {
-  // Create a typed array of the required length
-  const randomBytes = new Uint8Array(length);
-  // Fill it with cryptographically secure random values
-  crypto.getRandomValues(randomBytes);
-  // Convert to base64 and remove non-alphanumeric characters
-  const base64 = btoa(String.fromCharCode(...randomBytes))
-    .replace(/[+/]/g, '') // Remove + and /
-    .substring(0, length); // Ensure exact length
-  return `sk_test_${base64}`;
-}
-
-function AddApiKeyModal({ isOpen, onClose, onSave }: Readonly<AddApiKeyModalProps>) {
-  const handleSubmit = (e: React.FormEvent) => {
+function AddApiKeyModal({ isOpen, onClose, onSave, loading }: Readonly<AddApiKeyModalProps>) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newKey = generateSecureKey();
-    onSave(newKey);
-    onClose();
+    try {
+      await onSave();
+      onClose();
+    } catch (error) {
+      // Error handling is done in the parent component
+      console.error('Failed to create API key:', error);
+    }
   };
 
   if (!isOpen) return null;
@@ -60,15 +36,18 @@ function AddApiKeyModal({ isOpen, onClose, onSave }: Readonly<AddApiKeyModalProp
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 hover:text-gray-900"
+              disabled={loading}
+              className="px-4 py-2 text-gray-700 hover:text-gray-900 disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg transition-colors"
+              disabled={loading}
+              className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 flex items-center space-x-2"
             >
-              Generate Key
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+              <span>Generate Key</span>
             </button>
           </div>
         </form>
@@ -125,21 +104,36 @@ export function ApiKeySettings() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isNewKeyModalOpen, setIsNewKeyModalOpen] = useState(false);
   const [newApiKey, setNewApiKey] = useState('');
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>(mockApiKeys);
+  const [isCreating, setIsCreating] = useState(false);
+  
+  const { 
+    apiKeys, 
+    loading, 
+    error, 
+    createApiKey, 
+    deleteApiKey, 
+    maskToken 
+  } = useApiKeys();
 
-  const handleAddKey = (key: string) => {
-    const newKey: ApiKey = {
-      id: `key_${Date.now()}`,
-      createdAt: new Date().toISOString().split('T')[0],
-      lastUsed: null,
-    };
-    setApiKeys([...apiKeys, newKey]);
-    setNewApiKey(key);
-    setIsNewKeyModalOpen(true);
+  const handleAddKey = async () => {
+    try {
+      setIsCreating(true);
+      const createdKey = await createApiKey();
+      setNewApiKey(createdKey.api_key);
+      setIsNewKeyModalOpen(true);
+    } catch (error) {
+      console.error('Failed to create API key:', error);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
-  const handleRevoke = (keyId: string) => {
-    setApiKeys(apiKeys.filter(key => key.id !== keyId));
+  const handleRevoke = async (keyId: string) => {
+    try {
+      await deleteApiKey(keyId);
+    } catch (error) {
+      console.error('Failed to delete API key:', error);
+    }
   };
 
   return (
@@ -148,44 +142,69 @@ export function ApiKeySettings() {
         <h1 className="text-2xl font-bold text-gray-900">API Keys</h1>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+          disabled={loading || isCreating}
+          className="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors disabled:opacity-50"
         >
           <Plus className="w-4 h-4" />
           <span>Add API Key</span>
         </button>
       </div>
 
-      <div className="grid gap-6">
-        {apiKeys.map((key) => (
-          <div
-            key={key.id}
-            className="bg-white rounded-lg shadow-lg border border-gray-200 p-6"
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <div className="font-mono text-sm bg-gray-50 px-3 py-1 rounded-lg mb-2">
-                  •••• •••• •••• {key.id.slice(-4)}
-                </div>
-                <div className="text-sm text-gray-500">
-                  Created on {key.createdAt}
-                  {key.lastUsed && ` • Last used on ${key.lastUsed}`}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-center space-x-2 text-red-700">
+            <AlertCircle className="w-4 h-4" />
+            <span className="text-sm">{error}</span>
+          </div>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-6 h-6 animate-spin text-gray-500" />
+          <span className="ml-2 text-gray-500">Loading API keys...</span>
+        </div>
+      ) : (
+        <div className="grid gap-6">
+          {apiKeys.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <div className="text-lg font-medium mb-2">No API keys found</div>
+              <div className="text-sm">Create your first API key to get started</div>
+            </div>
+          ) : (
+            apiKeys.map((key) => (
+              <div
+                key={key.id}
+                className="bg-white rounded-lg shadow-lg border border-gray-200 p-6"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <div className="font-mono text-sm bg-gray-50 px-3 py-1 rounded-lg mb-2">
+                      {key.masked_api_key || maskToken(key.api_key)}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Created on {new Date(key.created_at).toLocaleDateString()}
+                      {key.last_used_at && ` • Last used on ${new Date(key.last_used_at).toLocaleDateString()}`}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleRevoke(key.id)}
+                    className="text-red-600 hover:text-red-700 text-sm font-medium"
+                  >
+                    Revoke
+                  </button>
                 </div>
               </div>
-              <button
-                onClick={() => handleRevoke(key.id)}
-                className="text-red-600 hover:text-red-700 text-sm font-medium"
-              >
-                Revoke
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+            ))
+          )}
+        </div>
+      )}
 
       <AddApiKeyModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSave={handleAddKey}
+        loading={isCreating}
       />
 
       <NewKeyModal
