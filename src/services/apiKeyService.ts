@@ -1,6 +1,6 @@
 import { apiService } from './api';
 import { API_CONFIG } from '../config/api';
-import { ApiKey, ApiKeyListResponse } from '../types/apiKey.ts';
+import { ApiKey, ApiKeyListResponse } from '../types/apiKey';
 
 export class ApiKeyService {
   async getApiKeys(
@@ -12,10 +12,8 @@ export class ApiKeyService {
         {},
         token
       );
-      console.log("API Keys response:", response.data);
       return response.data ?? [];
-    } catch (error) {
-      console.error('Error fetching API keys:', error);
+    } catch {
       throw new Error('Failed to fetch API keys');
     }
   }
@@ -29,8 +27,8 @@ export class ApiKeyService {
       );
 
       return response.data;
-    } catch (error) {
-      console.error('Error creating API key:', error);
+    } catch {
+
       throw new Error('Failed to create API key');
     }
   }
@@ -41,8 +39,8 @@ export class ApiKeyService {
         `${API_CONFIG.ENDPOINTS.API_KEYS}/${apiKeyId}`,
         token
       );
-    } catch (error) {
-      console.error('Error deleting API key:', error);
+    } catch {
+
       throw new Error('Failed to delete API key');
     }
   }
@@ -55,8 +53,7 @@ export class ApiKeyService {
         token
       );
       return response.data;
-    } catch (error) {
-      console.error('Error validating API key:', error);
+    } catch {
       throw new Error('Failed to validate API key');
     }
   }
