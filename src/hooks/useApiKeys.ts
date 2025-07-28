@@ -41,7 +41,6 @@ export function useApiKeys() {
   const createApiKey = useCallback(async () => {
     try {
       const token = await getToken();
-
       if (!token) {
         throw new Error('Authentication token not available');
       }

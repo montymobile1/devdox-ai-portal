@@ -54,7 +54,6 @@ export class ApiKeyService {
         {},
         token
       );
-
       return response.data;
     } catch (error) {
       console.error('Error validating API key:', error);

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, AlertCircle, Loader2 } from 'lucide-react';
 import { useApiKeys } from '../../hooks/useApiKeys';
-import { ApiKey } from '../../types/apiKey';
+
 
 interface AddApiKeyModalProps {
   readonly isOpen: boolean;

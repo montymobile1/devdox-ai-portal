@@ -8,5 +8,4 @@ export interface ApiKey {
 
 export interface ApiKeyListResponse {
   data:  ApiKey[];
-
 }
