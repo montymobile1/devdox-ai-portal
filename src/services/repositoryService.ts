@@ -25,17 +25,16 @@ export class RepositoryService {
   }
 
   async analyzeRepository(token: string, repositoryId: string): Promise<void> {
-    try {
-      await apiService.post(
-        API_CONFIG.ENDPOINTS.ANALYZE_REPO,
-        { id: repositoryId },
-        token
-      );
-    } catch (error) {
-      console.error('Error analyzing repository:', error);
-      throw new Error('Failed to analyze repository');
-    }
+  try {
+    await apiService.post(
+      API_CONFIG.ENDPOINTS.ANALYZE_REPO,
+      { id: repositoryId },
+      token
+    );
+  } catch {
+    throw new Error('Failed to analyze repository');
   }
+}
 
   async getRepositoriesByTokenId(token: string, tokenId: string): Promise<Repository[]> {
     try {
