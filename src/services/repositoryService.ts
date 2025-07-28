@@ -27,8 +27,8 @@ export class RepositoryService {
   async analyzeRepository(token: string, repositoryId: string): Promise<void> {
     try {
       await apiService.post(
-        `${API_CONFIG.ENDPOINTS.ANALYZE_REPO}/${encodeURIComponent(repositoryId)}`,
-        {},
+        API_CONFIG.ENDPOINTS.ANALYZE_REPO,
+        { id: repositoryId },
         token
       );
     } catch (error) {
