@@ -2,6 +2,17 @@ import { apiService } from './api';
 import { API_CONFIG } from '../config/api';
 import { Repository, RepositoryListResponse } from '../types/repository';
 
+export interface AddRepositoryPayload {
+  relative_path: string;
+  repo_alias_name: string;
+  repo_user_reference: string;
+}
+
+export interface AddRepositoryResponse {
+  data: Repository;
+  message: string;
+}
+
 export class RepositoryService {
   async getRepositories(
     token: string,
@@ -27,8 +38,8 @@ export class RepositoryService {
   async analyzeRepository(token: string, repositoryId: string): Promise<void> {
     try {
       await apiService.post(
-        `${API_CONFIG.ENDPOINTS.ANALYZE_REPO}/${encodeURIComponent(repositoryId)}`,
-        {},
+          API_CONFIG.ENDPOINTS.ANALYZE_REPO,
+         { "id": encodeURIComponent(repositoryId) },
         token
       );
     } catch (error) {
@@ -48,6 +59,21 @@ export class RepositoryService {
     } catch (error) {
       console.error('Error fetching repositories:', error);
       throw new Error('Failed to fetch repositories');
+    }
+  }
+
+  async addRepository(token: string, tokenId: string, payload: AddRepositoryPayload): Promise<AddRepositoryResponse> {
+    try {
+      const response = await apiService.post<AddRepositoryResponse>(
+        `${API_CONFIG.ENDPOINTS.GIT_REPOS}/${tokenId}`,
+        payload,
+        token
+      );
+
+      return response;
+    } catch (error) {
+      console.error('Error adding repository:', error);
+      throw new Error('Failed to add repository');
     }
   }
 }

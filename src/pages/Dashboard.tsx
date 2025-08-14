@@ -8,10 +8,14 @@ import { ApiKeySettings } from '../components/dashboard/ApiKeySettings';
 import { GitTokenSettings } from '../components/dashboard/GitTokenSettings';
 import { AddRepositoryModal } from '../components/dashboard/AddRepositoryModal';
 import { Footer } from '../components/layout/Footer';
+import { NotificationContainer } from '../components/notifications/NotificationContainer';
+import { useNotification } from '../hooks/useNotification';
 
 export function Dashboard() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const { notifications, removeNotification, showSuccess, showError } = useNotification();
+
 
   return (
     <>
@@ -55,6 +59,12 @@ export function Dashboard() {
           <AddRepositoryModal
             isOpen={isAddModalOpen}
             onClose={() => setIsAddModalOpen(false)}
+            showSuccess={showSuccess}
+            showError={showError}
+          />
+          <NotificationContainer
+            notifications={notifications}
+            onClose={removeNotification}
           />
         </div>
       </SignedIn>
