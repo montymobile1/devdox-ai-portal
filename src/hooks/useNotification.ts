@@ -15,7 +15,7 @@ export function useNotification() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const addNotification = useCallback((notification: Omit<Notification, 'id'>) => {
-    const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+    const id = crypto.randomUUID();
     const newNotification: Notification = {
       id,
       autoClose: true,
