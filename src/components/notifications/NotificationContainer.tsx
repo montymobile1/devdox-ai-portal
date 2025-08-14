@@ -28,7 +28,7 @@ const icons: Record<NotificationType, React.ComponentType<{ className?: string }
   warning: AlertTriangle,
 };
 
-function NotificationItem({ notification, onClose }: NotificationItemProps) {
+function NotificationItem({ notification, onClose }: Readonly<NotificationItemProps>) {
   const Icon = icons[notification.type];
 
   return (
@@ -67,7 +67,7 @@ interface NotificationContainerProps {
   onClose: (id: string) => void;
 }
 
-export function NotificationContainer({ notifications, onClose }: NotificationContainerProps) {
+export function NotificationContainer({ notifications, onClose }: Readonly<NotificationContainerProps> ) {
   if (notifications.length === 0) {
     return null;
   }
