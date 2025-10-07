@@ -22,12 +22,12 @@ export class ApiKeyService {
         return [];
       }
 
-      if (!Array.isArray(response.data)) {
-        console.error('API response.data is not an array:', response.data);
+      if (!Array.isArray(response.data.items)) {
+        console.error('API response.data is not an array:', response.data.items);
         return [];
       }
-
-      return response.data;
+      console.log("response .data", response.data.items)
+      return response.data.items;
     } catch (error) {
       console.error('Failed to fetch API keys:', error);
 
