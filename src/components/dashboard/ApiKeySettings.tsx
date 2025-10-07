@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Plus, AlertCircle, Loader2 } from 'lucide-react';
 import { useApiKeys } from '../../hooks/useApiKeys';
 
-
 interface AddApiKeyModalProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
@@ -17,7 +16,6 @@ function AddApiKeyModal({ isOpen, onClose, onSave, loading }: Readonly<AddApiKey
       await onSave();
       onClose();
     } catch (error) {
-      // Error handling is done in the parent component
       console.error('Failed to create API key:', error);
     }
   };
@@ -63,8 +61,16 @@ interface NewKeyModalProps {
 }
 
 function NewKeyModal({ isOpen, apiKey, onClose }: Readonly<NewKeyModalProps>) {
-  const handleCopy = () => {
-    navigator.clipboard.writeText(apiKey);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(apiKey);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
+    }
   };
 
   if (!isOpen) return null;
@@ -79,14 +85,14 @@ function NewKeyModal({ isOpen, apiKey, onClose }: Readonly<NewKeyModalProps>) {
           </p>
         </div>
         <div className="bg-gray-50 p-4 rounded-lg font-mono text-sm mb-6 break-all">
-          {apiKey}
+          {apiKey || 'No API key available'}
         </div>
         <div className="flex justify-end space-x-4">
           <button
             onClick={handleCopy}
             className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
           >
-            Copy
+            {copied ? 'Copied!' : 'Copy'}
           </button>
           <button
             onClick={onClose}
@@ -105,22 +111,27 @@ export function ApiKeySettings() {
   const [isNewKeyModalOpen, setIsNewKeyModalOpen] = useState(false);
   const [newApiKey, setNewApiKey] = useState('');
   const [isCreating, setIsCreating] = useState(false);
-  
-  const { 
-    apiKeys, 
-    loading, 
-    error, 
-    createApiKey, 
-    deleteApiKey, 
-    maskToken 
+
+  const {
+    apiKeys,
+    loading,
+    error,
+    createApiKey,
+    deleteApiKey,
+    maskToken
   } = useApiKeys();
 
   const handleAddKey = async () => {
     try {
       setIsCreating(true);
       const createdKey = await createApiKey();
-      setNewApiKey(createdKey.api_key);
-      setIsNewKeyModalOpen(true);
+
+      if (createdKey?.api_key) {
+        setNewApiKey(createdKey.api_key);
+        setIsNewKeyModalOpen(true);
+      } else {
+        console.error('Created key is missing api_key field');
+      }
     } catch (error) {
       console.error('Failed to create API key:', error);
     } finally {
@@ -129,6 +140,15 @@ export function ApiKeySettings() {
   };
 
   const handleRevoke = async (keyId: string) => {
+    if (!keyId) {
+      console.error('Cannot revoke: keyId is missing');
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to revoke this API key? This action cannot be undone.')) {
+      return;
+    }
+
     try {
       await deleteApiKey(keyId);
     } catch (error) {
@@ -166,36 +186,46 @@ export function ApiKeySettings() {
         </div>
       ) : (
         <div className="grid gap-6">
-          {apiKeys.length === 0 ? (
+          {!apiKeys || apiKeys.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
               <div className="text-lg font-medium mb-2">No API keys found</div>
               <div className="text-sm">Create your first API key to get started</div>
             </div>
           ) : (
-            apiKeys.map((key) => (
-              <div
-                key={key.id}
-                className="bg-white rounded-lg shadow-lg border border-gray-200 p-6"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <div className="font-mono text-sm bg-gray-50 px-3 py-1 rounded-lg mb-2">
-                      {key.masked_api_key || maskToken(key.api_key)}
+            apiKeys.map((key) => {
+              if (!key || !key.id) {
+                console.warn('Skipping invalid API key:', key);
+                return null;
+              }
+
+              return (
+                <div
+                  key={key.id}
+                  className="bg-white rounded-lg shadow-lg border border-gray-200 p-6"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <div className="font-mono text-sm bg-gray-50 px-3 py-1 rounded-lg mb-2">
+                        {key.masked_api_key || maskToken(key.api_key || '')}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {key.created_at
+                          ? `Created on ${new Date(key.created_at).toLocaleDateString()}`
+                          : 'Creation date unknown'}
+                        {key.last_used_at &&
+                          ` • Last used on ${new Date(key.last_used_at).toLocaleDateString()}`}
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-500">
-                      Created on {new Date(key.created_at).toLocaleDateString()}
-                      {key.last_used_at && ` • Last used on ${new Date(key.last_used_at).toLocaleDateString()}`}
-                    </div>
+                    <button
+                      onClick={() => handleRevoke(key.id)}
+                      className="text-red-600 hover:text-red-700 text-sm font-medium"
+                    >
+                      Revoke
+                    </button>
                   </div>
-                  <button
-                    onClick={() => handleRevoke(key.id)}
-                    className="text-red-600 hover:text-red-700 text-sm font-medium"
-                  >
-                    Revoke
-                  </button>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       )}
@@ -210,7 +240,10 @@ export function ApiKeySettings() {
       <NewKeyModal
         isOpen={isNewKeyModalOpen}
         apiKey={newApiKey}
-        onClose={() => setIsNewKeyModalOpen(false)}
+        onClose={() => {
+          setIsNewKeyModalOpen(false);
+          setNewApiKey('');
+        }}
       />
     </div>
   );
