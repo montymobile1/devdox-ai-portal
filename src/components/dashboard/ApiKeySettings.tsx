@@ -206,7 +206,7 @@ export function ApiKeySettings() {
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <div className="font-mono text-sm bg-gray-50 px-3 py-1 rounded-lg mb-2">
-                        {key.masked_api_key  || ''}
+                        {key.masked_api_key || maskToken(key.api_key || '')}
                       </div>
                       <div className="text-sm text-gray-500">
                         {key.created_at
