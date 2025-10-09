@@ -79,7 +79,7 @@ export class ApiKeyService {
   async deleteApiKey(token: string, apiKeyId: string): Promise<void> {
     try {
       await apiService.delete(
-        `${API_CONFIG.ENDPOINTS.API_KEYS}/${apiKeyId}`,
+        `${API_CONFIG.ENDPOINTS.API_KEYS}${apiKeyId}`,
         token
       );
     } catch (error) {
@@ -105,7 +105,7 @@ export class ApiKeyService {
       const response = await apiService.post<{
         data: { valid: boolean; message?: string };
       }>(
-        `${API_CONFIG.ENDPOINTS.API_KEYS}/${apiKeyId}/validate`,
+        `${API_CONFIG.ENDPOINTS.API_KEYS}${apiKeyId}/validate`,
         {},
         token
       );
