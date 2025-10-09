@@ -3,7 +3,7 @@ export const API_CONFIG = {
   ENDPOINTS: {
     REPOSITORIES: '/api/v1/repos/',
     GIT_REPOS: '/api/v1/repos/git_repos/users/',
-    ANALYZE_REPO: '/api/v1/repos/analyze/',
+    ANALYZE_REPO: '/api/v1/repos/analyze',
     GIT_TOKENS: '/api/v1/git_tokens/',
     API_KEYS: '/api/v1/api-keys/',
   },
