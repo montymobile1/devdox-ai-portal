@@ -118,18 +118,19 @@ export function RepositoryList({ refreshTrigger }: RepositoryListProps) {
                 )}
               </div>
             </div>
+            {repo.status === '' || repo.status === 'failed' ? (
+              <button
+                onClick={() => handleAnalyze(repo.id)}
+                className="shrink-0 flex items-center space-x-2 px-4 py-2 rounded-lg transition-all bg-cyan-500/10 hover:bg-cyan-500 hover:text-white text-cyan-500"
+              >
+                <PlayCircle className="w-5 h-5" />
+                <span>Analyze {repo.repo_alias_name}</span>
+              </button>
+            ) : (
+              <span  className="shrink-0 flex items-center space-x-2 px-4 py-2 rounded-lg transition-all bg-cyan-500/10 hover:bg-cyan-500 hover:text-white text-cyan-500"
+>{repo.repo_alias_name}</span>
+                )}
 
-            <button
-              onClick={() => handleAnalyze(repo.id)}
-              className={`shrink-0 flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
-                repo.repo_updated_at
-                  ? 'bg-cyan-500 hover:bg-cyan-600 text-white'
-                  : 'bg-cyan-500/10 hover:bg-cyan-500 hover:text-white text-cyan-500'
-              }`}
-            >
-              <PlayCircle className="w-5 h-5" />
-              <span>{repo.repo_updated_at ? 'Re-analyze' : 'Analyze'}</span>
-            </button>
           </div>
 
           <div className="flex space-x-6 text-gray-500">
