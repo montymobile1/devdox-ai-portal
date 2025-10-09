@@ -51,7 +51,7 @@ export class RepositoryService {
   async getRepositoriesByTokenId(token: string, tokenId: string): Promise<Repository[]> {
     try {
          const response = await apiService.get<{ data: { repos: Repository[] } }>(
-        `${API_CONFIG.ENDPOINTS.GIT_REPOS}/${tokenId}`,
+        `${API_CONFIG.ENDPOINTS.GIT_REPOS}${tokenId}`,
         {},
         token
       );
@@ -65,7 +65,7 @@ export class RepositoryService {
   async addRepository(token: string, tokenId: string, payload: AddRepositoryPayload): Promise<AddRepositoryResponse> {
     try {
       const response = await apiService.post<AddRepositoryResponse>(
-        `${API_CONFIG.ENDPOINTS.GIT_REPOS}/${tokenId}`,
+        `${API_CONFIG.ENDPOINTS.GIT_REPOS}${tokenId}`,
         payload,
         token
       );

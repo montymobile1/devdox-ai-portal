@@ -39,7 +39,7 @@ export class GitTokenService {
   async updateGitToken(token: string, tokenId: string, updates: Partial<CreateGitTokenRequest>): Promise<GitToken> {
     try {
       const response = await apiService.put<{ data: GitToken }>(
-        `${API_CONFIG.ENDPOINTS.GIT_TOKENS}/${tokenId}`,
+        `${API_CONFIG.ENDPOINTS.GIT_TOKENS}${tokenId}`,
         updates,
         token
       );
@@ -54,7 +54,7 @@ export class GitTokenService {
   async deleteGitToken(token: string, tokenId: string): Promise<void> {
     try {
       await apiService.delete(
-        `${API_CONFIG.ENDPOINTS.GIT_TOKENS}/${tokenId}`,
+        `${API_CONFIG.ENDPOINTS.GIT_TOKENS}${tokenId}`,
         token
       );
     } catch (error) {
@@ -66,7 +66,7 @@ export class GitTokenService {
   async validateGitToken(token: string, tokenId: string): Promise<{ valid: boolean; message?: string }> {
     try {
       const response = await apiService.post<{ data: { valid: boolean; message?: string } }>(
-        `${API_CONFIG.ENDPOINTS.GIT_TOKENS}/${tokenId}/validate`,
+        `${API_CONFIG.ENDPOINTS.GIT_TOKENS}${tokenId}/validate`,
         {},
         token
       );
