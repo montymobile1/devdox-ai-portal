@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GitBranch, Star, PlayCircle , ExternalLink} from 'lucide-react';
 import { useRepositories } from '../../hooks/useRepositories';
+
+interface RepositoryListProps {
+  refreshTrigger?: number;
+}
 
 // Utility functions for date formatting
 function formatDate(dateString: string | null): string {
@@ -41,12 +45,17 @@ function formatRelativeDate(dateString: string | null): string {
   }
 }
 
-export function RepositoryList() {
-  const { repositories, loading, error, analyzeRepository } = useRepositories();
+export function RepositoryList({ refreshTrigger }: RepositoryListProps) {
+  const { repositories, loading, error,  fetchRepositories, analyzeRepository } = useRepositories();
 
   const handleAnalyze = async (repositoryId: string) => {
     await analyzeRepository(repositoryId);
   };
+    useEffect(() => {
+    if (refreshTrigger && refreshTrigger > 0) {
+      fetchRepositories();
+    }
+  }, [refreshTrigger, fetchRepositories]);
 
   if (loading) {
     return (
@@ -70,6 +79,7 @@ export function RepositoryList() {
         <div className="text-gray-500">No repositories found</div>
       </div>
     );
+
   }
 
   return (

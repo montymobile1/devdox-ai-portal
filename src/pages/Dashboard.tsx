@@ -14,9 +14,14 @@ import { useNotification } from '../hooks/useNotification';
 export function Dashboard() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [repoRefreshTrigger, setRepoRefreshTrigger] = useState(0);
   const { notifications, removeNotification, showSuccess, showError } = useNotification();
 
+   const handleRepositoryAdded = () => {
 
+    setRepoRefreshTrigger(prev => prev + 1);
+
+  };
   return (
     <>
       <SignedIn>
@@ -45,7 +50,7 @@ export function Dashboard() {
                             <span>Add Repository</span>
                           </button>
                         </div>
-                        <RepositoryList />
+                        <RepositoryList  refreshTrigger={repoRefreshTrigger} />
                       </>
                     }
                   />
@@ -61,6 +66,7 @@ export function Dashboard() {
             onClose={() => setIsAddModalOpen(false)}
             showSuccess={showSuccess}
             showError={showError}
+            onRepositoryAdded={handleRepositoryAdded}
           />
           <NotificationContainer
             notifications={notifications}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,  useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useAuth } from '@clerk/clerk-react';
 import { useGitTokens } from '../../hooks/useGitTokens';
@@ -28,7 +28,7 @@ export function AddRepositoryModal({
   showSuccess, 
   showError 
 }: AddRepositoryModalProps) {
-  const { gitTokens, loading: tokensLoading, error: tokensError } = useGitTokens();
+  const { gitTokens, loading: tokensLoading, error: tokensError, fetchGitTokens } = useGitTokens();
   const { userId, getToken } = useAuth();
   const [selectedToken, setSelectedToken] = useState('');
   const [gitRepositories, setGitRepositories] = useState<GitRepository[]>([]);
@@ -38,6 +38,15 @@ export function AddRepositoryModal({
   const [isLoading, setIsLoading] = useState(false);
   const [repoError, setRepoError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+
+    if (isOpen) {
+      fetchGitTokens();
+    }
+
+  }, [isOpen, fetchGitTokens]);
+
 
   const fetchGitRepositories = async (tokenId: string) => {
     if (!tokenId || !userId) {
