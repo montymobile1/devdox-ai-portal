@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import { Check, Copy, GitBranch, Key, Mail, FileCode } from 'lucide-react';
 
 
