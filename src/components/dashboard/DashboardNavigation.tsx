@@ -1,5 +1,5 @@
 import React from 'react';
-import { FolderGit2, Key, GitBranch, X } from 'lucide-react';
+import { FolderGit2, Key, GitBranch, X, BookOpen } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 interface NavigationItem {
@@ -29,6 +29,11 @@ const navigationItems: NavigationItem[] = [
     label: 'API Key',
     path: '/dashboard/api-key',
   },
+    {
+        icon: <BookOpen className="w-5 h-5" />,
+        label: 'Started Guide',
+        path: '/dashboard/getting-started',
+    }
 ];
 
 export function DashboardNavigation({ isOpen, onClose }: Readonly<DashboardNavigationProps>) {

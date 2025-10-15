@@ -4,6 +4,7 @@ import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/clerk-react';
 import { DashboardHeader } from '../components/dashboard/DashboardHeader';
 import { DashboardNavigation } from '../components/dashboard/DashboardNavigation';
 import { RepositoryList } from '../components/dashboard/RepositoryList';
+import {GettingStartedGuide} from '../components/dashboard/StartedGuide';
 import { ApiKeySettings } from '../components/dashboard/ApiKeySettings';
 import { GitTokenSettings } from '../components/dashboard/GitTokenSettings';
 import { AddRepositoryModal } from '../components/dashboard/AddRepositoryModal';
@@ -35,27 +36,28 @@ export function Dashboard() {
               onClose={() => setIsMobileNavOpen(false)}
             />
             <main className="flex-1 bg-white">
-              <div className="container mx-auto px-4 sm:px-6 py-8">
+              <div className="container ">
                 <Routes>
                   <Route
-                    path="/"
-                    element={
-                      <>
-                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8">
-                          <h1 className="text-2xl font-bold text-gray-900">Repositories</h1>
-                          <button
-                            onClick={() => setIsAddModalOpen(true)}
-                            className="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors"
-                          >
-                            <span>Add Repository</span>
-                          </button>
+                      path="/"
+                      element={
+                        <div className="mx-auto px-4 sm:px-6 py-8">
+                          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8">
+                            <h1 className="text-2xl font-bold text-gray-900">Repositories</h1>
+                            <button
+                              onClick={() => setIsAddModalOpen(true)}
+                              className="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+                            >
+                              <span>Add Repository</span>
+                            </button>
+                          </div>
+                          <RepositoryList refreshTrigger={repoRefreshTrigger} />
                         </div>
-                        <RepositoryList  refreshTrigger={repoRefreshTrigger} />
-                      </>
-                    }
-                  />
+                      }
+                    />
                   <Route path="/git-token" element={<GitTokenSettings />} />
                   <Route path="/api-key" element={<ApiKeySettings />} />
+                    <Route path="/getting-started" element={<GettingStartedGuide />} />
                 </Routes>
               </div>
             </main>
