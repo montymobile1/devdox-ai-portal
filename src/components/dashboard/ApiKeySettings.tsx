@@ -157,7 +157,7 @@ export function ApiKeySettings() {
   };
 
   return (
-    <div>
+     <div className="mx-auto px-4 sm:px-6 py-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8">
         <h1 className="text-2xl font-bold text-gray-900">API Keys</h1>
         <button

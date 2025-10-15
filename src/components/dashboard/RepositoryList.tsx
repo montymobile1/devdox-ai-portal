@@ -118,7 +118,7 @@ export function RepositoryList({ refreshTrigger }: RepositoryListProps) {
                 )}
               </div>
             </div>
-            {repo.status === '' || repo.status === 'failed' ? (
+            {repo.status === 'pending' || repo.status === 'failed' ? (
               <button
                 onClick={() => handleAnalyze(repo.id)}
                 className="shrink-0 flex items-center space-x-2 px-4 py-2 rounded-lg transition-all bg-cyan-500/10 hover:bg-cyan-500 hover:text-white text-cyan-500"
@@ -128,7 +128,7 @@ export function RepositoryList({ refreshTrigger }: RepositoryListProps) {
               </button>
             ) : (
               <span  className="shrink-0 flex items-center space-x-2 px-4 py-2 rounded-lg transition-all bg-cyan-500/10 hover:bg-cyan-500 hover:text-white text-cyan-500"
->{repo.repo_alias_name}</span>
+                >{repo.repo_alias_name}</span>
                 )}
 
           </div>

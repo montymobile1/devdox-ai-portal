@@ -200,14 +200,16 @@ export function GitTokenSettings() {
 
   if (loading) {
     return (
+        <div className="mx-auto px-4 sm:px-6 py-8">
       <div className="flex justify-center items-center py-12">
         <div className="text-gray-500">Loading git tokens...</div>
       </div>
+        </div>
     );
   }
 
   return (
-    <div>
+     <div className="mx-auto px-4 sm:px-6 py-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Git Tokens</h1>
         <button

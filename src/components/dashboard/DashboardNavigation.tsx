@@ -29,6 +29,11 @@ const navigationItems: NavigationItem[] = [
     label: 'API Key',
     path: '/dashboard/api-key',
   },
+    {
+        icon: <FolderGit2 className="w-5 h-5" />,
+        label: 'Started Guide',
+        path: '/dashboard/getting-started',
+    }
 ];
 
 export function DashboardNavigation({ isOpen, onClose }: Readonly<DashboardNavigationProps>) {
