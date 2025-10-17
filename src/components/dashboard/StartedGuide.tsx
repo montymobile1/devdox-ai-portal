@@ -25,16 +25,16 @@ export function GettingStartedGuide() {
   }
 }`;
 
-  const cursorConfig = `{
-  "mcpServers": {
-    "devdox": {
-      "url": "https://agent.devdox.ai/mcp",
-      "headers": {
-        "API-KEY": "YOUR_API_KEY_HERE"
+  const cursorConfig =  `{
+      "mcpServers": {
+        "devdox": {
+          "url": "https://agent.devdox.ai/mcp",
+          "headers": {
+            "API-KEY": "YOUR_API_KEY_HERE"
+          }
+        }
       }
-    }
-  }
-}`;
+    }`;
 
   const vscodeConfig = `{
   "servers": {
@@ -57,7 +57,7 @@ export function GettingStartedGuide() {
       config: cursorConfig,
       paths: {
         macos: '~/.cursor/mcp.json',
-        windows: '%USERPROFILE%\\.cursor\\mcp.json',
+        windows:  String.raw`%USERPROFILE%\.cursor\mcp.json`,
         linux: '~/.cursor/mcp.json'
       },
       instructions: {
@@ -94,22 +94,22 @@ export function GettingStartedGuide() {
       config: claudeConfig,
       paths: {
         macos: '~/Library/Application Support/Claude/claude_desktop_config.json',
-        windows: '%APPDATA%\\Claude\\claude_desktop_config.json',
+        windows: String.raw`%APPDATA%/Claude/claude_desktop_config.json`,
         linux: '~/.config/Claude/claude_desktop_config.json'
       },
       instructions: {
         macos: [
           'Open Terminal',
-          'Create directory: mkdir -p ~/Library/Application\\ Support/Claude',
-          'Edit file: nano ~/Library/Application\\ Support/Claude/claude_desktop_config.json',
+           String.raw`Create directory: mkdir -p ~/Library/Application\ Support/Claude`,
+          String.raw`Edit file: nano ~/Library/Application\ Support/Claude/claude_desktop_config.json`,
           'Paste the configuration above',
           'Save (Ctrl+O, Enter) and exit (Ctrl+X)',
           'Restart Claude Desktop'
         ],
         windows: [
           'Open PowerShell or Command Prompt',
-          'Create directory: mkdir %APPDATA%\\Claude',
-          'Edit file: notepad %APPDATA%\\Claude\\claude_desktop_config.json',
+          String.raw`Create directory: mkdir %APPDATA%/Claude`,
+          String.raw`Edit file: notepad %APPDATA%/Claude/claude_desktop_config.json`,
           'Paste the configuration above',
           'Save (Ctrl+S) and close',
           'Restart Claude Desktop'
@@ -364,7 +364,8 @@ export function GettingStartedGuide() {
                   <div className="bg-slate-900/50 rounded-lg p-4 border border-slate-700/50">
                     <h3 className="text-white font-medium text-sm mb-3">Select Your Operating System:</h3>
                     <div className="flex gap-2 flex-wrap">
-                      {(Object.keys(osIcons) as Array<keyof typeof osIcons>).map((os) => {
+
+                      {(Object.keys(osIcons) as Array<keyof typeof osIcons>).map((os:"macos" | "windows" | "linux"):any => {
                         const Icon = osIcons[os];
                         return (
                           <button
