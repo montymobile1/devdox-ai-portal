@@ -172,7 +172,11 @@ export function GettingStartedGuide() {
     windows: Monitor,
     linux: Terminal
   };
-
+  const osNames: Record<'macos' | 'windows' | 'linux', string> = {
+      macos: 'macOS',
+      windows: 'Windows',
+      linux: 'Linux'
+    };
   return (
     <div className="min-h-screen bg-slate-950 p-8">
       <div className="max-w-4xl mx-auto">
@@ -379,7 +383,7 @@ export function GettingStartedGuide() {
                           >
                             <Icon size={18} />
                             <span className="text-sm font-medium capitalize">
-                              {os === 'macos' ? 'macOS' : os === 'windows' ? 'Windows' : 'Linux'}
+                            {osNames[os]}
                             </span>
                           </button>
                         );
@@ -449,7 +453,7 @@ export function GettingStartedGuide() {
                     </h3>
                     <ol className="space-y-2">
                       {currentInstructions.map((instruction, index) => (
-                        <li key={index} className="text-gray-300 text-xs flex gap-2">
+                        <li key={`${selectedOS}-step-${index}`} className="text-gray-300 text-xs flex gap-2">
                           <span className="text-cyan-400 font-medium min-w-[20px]">
                             {index + 1}.
                           </span>
