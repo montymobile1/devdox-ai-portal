@@ -71,16 +71,16 @@ export function GettingStartedGuide() {
         ],
         windows: [
           'Open PowerShell or Command Prompt',
-          'Create directory: mkdir %USERPROFILE%\\.cursor',
-          'Edit file: notepad %USERPROFILE%\\.cursor\\mcp.json',
+            String.raw`Create directory: mkdir %USERPROFILE%/.cursor`,
+           String.raw`Edit file: notepad %USERPROFILE%/.cursor/mcp.json`,
           'Paste the configuration above',
           'Save (Ctrl+S) and close',
           'Restart Cursor IDE'
         ],
         linux: [
           'Open Terminal',
-          'Create directory: mkdir -p ~/.cursor',
-          'Edit file: nano ~/.cursor/mcp.json',
+          String.raw`Create directory: mkdir -p ~/.cursor`,
+          String.raw`Edit file: nano ~/.cursor/mcp.json`,
           'Paste the configuration above',
           'Save (Ctrl+O, Enter) and exit (Ctrl+X)',
           'Restart Cursor IDE'
@@ -131,7 +131,7 @@ export function GettingStartedGuide() {
       config: vscodeConfig,
       paths: {
         macos: '~/.vscode/mcp.json',
-        windows: '%USERPROFILE%\\.vscode\\mcp.json',
+        windows: String.raw`%USERPROFILE%/.vscode/mcp.json`,
         linux: '~/.vscode/mcp.json'
       },
       instructions: {
@@ -145,8 +145,8 @@ export function GettingStartedGuide() {
         ],
         windows: [
           'Open PowerShell or Command Prompt',
-          'Create directory: mkdir %USERPROFILE%\\.vscode',
-          'Edit file: notepad %USERPROFILE%\\.vscode\\mcp.json',
+          String.raw`Create directory: mkdir %USERPROFILE%/.vscode`,
+          String.raw`Edit file: notepad %USERPROFILE%/.vscode/mcp.json`,
           'Paste the configuration above',
           'Save (Ctrl+S) and close',
           'Reload VS Code window (Ctrl+Shift+P → "Reload Window")'
